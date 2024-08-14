@@ -1,6 +1,5 @@
 {
-  "dependencies": {
-    "express": "^4.19.2"
-  },
-  "scripts": {}
+  "scripts": {
+    "build": "echo 'Skipping build step...'"
+  }
 }
