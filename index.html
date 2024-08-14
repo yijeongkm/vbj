@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Decline Survey</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>쇠퇴경관 인식 설문조사</h1>
+            <p>두 경관이미지 중 어떤 경관이 더 쇠퇴했는지 선택해주세요.</p>
+        </div>
+
+        <div class="user-info">
+            <label for="gender">성별:</label>
+            <select id="gender">
+                <option value="남">남</option>
+                <option value="여">여</option>
+            </select>
+
+            <label for="age">나이대:</label>
+            <select id="age">
+                <option value="10대">10대</option>
+                <option value="20대">20대</option>
+                <option value="30대">30대</option>
+                <option value="40대">40대</option>
+                <option value="50대이상">50대이상</option>
+            </select>
+        </div>
+
+        <div class="images">
+            <div class="image-container" id="image-left-container">
+                <img src="" alt="Landscape 1" id="image-left" />
+            </div>
+            <div class="image-container" id="image-right-container">
+                <img src="" alt="Landscape 2" id="image-right" />
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button onclick="selectImage('left')">Left</button>
+            <button onclick="selectImage('right')">Right</button>
+            <button onclick="nextSelection()">Next</button>
+            <button onclick="saveSurvey()">Save</button>
+        </div>
+    </div>
+
+    <button class="admin-button" onclick="downloadResults()">Admin</button>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
