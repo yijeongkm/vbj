@@ -8,7 +8,7 @@ export default function handler(req, res) {
     fs.appendFile(resultsFile, JSON.stringify(result) + '\n', (err) => {
         if (err) {
             console.error('Error saving result:', err);
-            return res.status(500).json({ error: 'Error saving result' });
+            return res.status(500).send('Error saving result');
         }
         res.status(200).json({ message: 'Result saved' });
     });

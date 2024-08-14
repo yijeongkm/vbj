@@ -5,7 +5,7 @@ export default function handler(req, res) {
     res.download(file, 'results.json', (err) => {
         if (err) {
             console.error('Error downloading file:', err);
-            res.status(500).json({ error: 'Error downloading file' });
+            res.status(500).send('Error downloading file');
         }
     });
 }
