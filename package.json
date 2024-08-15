@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "vercel dev",
-    "build": "npm install" 
+    "build": "npm run build" 
   },
   "dependencies": {
     "express": "^4.19.2",
