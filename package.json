@@ -2,11 +2,11 @@
   "name": "decline-perception",
   "version": "1.0.0",
   "scripts": {
-    "start": "vercel dev",
-    "build": ""  
+    "build": ""
   },
+  "type": "module",
   "dependencies": {
-    "express": "^4.19.2",
-    "aws-sdk": "^2.1126.0"
+    "aws-sdk": "^2.1025.0",
+    "express": "^4.19.2"
   }
 }
