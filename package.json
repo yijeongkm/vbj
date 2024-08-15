@@ -1,5 +1,12 @@
 {
+  "name": "your-project-name",
+  "version": "1.0.0",
   "scripts": {
-    "build": "echo 'Skipping build step...'"
+    "start": "vercel dev",  // 로컬 개발 시 Vercel dev 모드로 시작
+    "build": "npm install"  // 빌드 시 필요한 패키지 설치
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "aws-sdk": "^2.1126.0"
   }
 }
