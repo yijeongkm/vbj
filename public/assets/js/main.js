@@ -108,9 +108,6 @@ function saveSurvey() {
         console.log('Survey results saved to server.');
         alert('Survey results saved.');
         surveyResults = []; // Reset survey results
-        setTimeout(() => {
-            window.close();
-        }, 300);
     })
     .catch(error => console.error('Error saving survey results:', error));
 }
