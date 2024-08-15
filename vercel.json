@@ -1,6 +1,7 @@
 {
-    "version": 2,
-    "routes": [
-      { "src": "/api/(.*)", "dest": "/api/index.js", "status": 200 }
-    ]
-  }
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "^/api/.*", "dest": "/api/index.js" },
+    { "src": "/.*", "dest": "/index.html" }
+  ]
+}
