@@ -2,8 +2,8 @@ const AWS = require('aws-sdk');
 
 // S3 인스턴스 생성
 const S3 = new AWS.S3({
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID, // 환경 변수로부터 액세스 키 가져오기
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY, // 환경 변수로부터 비밀 액세스 키 가져오기
     region: 'ap-northeast-2' // 서울 리전
 });
 
