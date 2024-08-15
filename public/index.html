@@ -58,9 +58,15 @@
 
         function loadRandomImages() {
             fetch('/api/images')
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     const images = data.imageUrls;
+                    console.log('Fetched images:', images); // 이미지 로드 확인을 위한 로그 추가
 
                     if (images.length < 2) {
                         throw new Error('Not enough images to display');
