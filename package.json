@@ -5,8 +5,11 @@
     "build": ""
   },
   "type": "module",
+  "engines": {
+    "node": "16.x"
+  },
   "dependencies": {
-    "aws-sdk": "^2.1025.0",
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "aws-sdk": "^2.1126.0"
   }
 }

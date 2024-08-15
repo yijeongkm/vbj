@@ -1,9 +1,9 @@
 {
   "routes": [
     { "handle": "filesystem" },
-    { "src": "^/api/images$", "dest": "/api/images.js" },
-    { "src": "^/api/save$", "dest": "/api/save.js" },
-    { "src": "^/api/results$", "dest": "/api/results.js" },
-    { "src": "/.*", "dest": "/index.html" }
+    { "source": "^/api/images$", "dest": "/api/images.js" },
+    { "source": "^/api/save$", "dest": "/api/save.js" },
+    { "source": "^/api/results$", "dest": "/api/results.js" },
+    { "source": "/.*", "dest": "/index.html" }
   ]
 }
