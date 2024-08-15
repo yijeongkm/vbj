@@ -4,6 +4,6 @@
     { "src": "^/api/images$", "dest": "/api/images.js" },
     { "src": "^/api/save$", "dest": "/api/save.js" },
     { "src": "^/api/results$", "dest": "/api/results.js" },
-    { "src": "/.*", "dest": "/index.html" }
+    { "src": "/.*", "dest": "/public/index.html" }
   ]
 }
