@@ -1,0 +1,9 @@
+import imagePaths from '../../../imagePaths.json'; // 로컬에서 생성한 imagePaths.json 파일
+
+export default function handler(req, res) {
+    // 이미지 파일 중 하나를 랜덤하게 선택
+    const randomImage = imagePaths[Math.floor(Math.random() * imagePaths.length)];
+
+    // 클라이언트에 선택된 이미지 URL 반환
+    res.status(200).json({ imageUrl: `https://decline-perception-yijeongkms-projects.vercel.app${randomImage}` });
+}
