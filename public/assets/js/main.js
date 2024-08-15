@@ -10,20 +10,16 @@ function loadRandomImages() {
             }
             return response.json();
         })
-        .then(images => {
-            if (images.length < 2) {
-                throw new Error('Not enough images to display');
-            }
+        .then(data => {
+            const imageUrls = data.imageUrls; // 두 개의 이미지 URL 가져오기
 
-            // 이미지 배열을 랜덤하게 섞기
-            const shuffledImages = shuffleArray(images);
-
-            // 무작위로 선택된 두 개의 이미지를 각각의 컨테이너에 배치
-            document.getElementById('image-left').src = 'assets/images/' + shuffledImages[0];
-            document.getElementById('image-right').src = 'assets/images/' + shuffledImages[1];
+            // 각각의 이미지 요소에 이미지를 할당
+            document.getElementById('image-left').src = imageUrls[0];
+            document.getElementById('image-right').src = imageUrls[1];
         })
         .catch(error => console.error('Error fetching images:', error));
 }
+
 
 // 배열을 랜덤하게 섞는 함수
 function shuffleArray(array) {
