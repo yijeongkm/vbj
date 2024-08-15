@@ -1,5 +1,5 @@
 {
-  "name": "your-project-name",
+  "name": "decline-perception",
   "version": "1.0.0",
   "scripts": {
     "start": "vercel dev",  // 로컬 개발 시 Vercel dev 모드로 시작
