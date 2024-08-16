@@ -40,6 +40,7 @@
                 <div class="buttons">
                     <button onclick="selectImage('left')">Left</button>
                     <button onclick="nextSelection()">Next</button>
+                    <button id="leftButton" onclick="selectImage('left')">Left</button>
                 </div>
             </div>
             
@@ -49,7 +50,9 @@
                 </div>
                 <div class="buttons">
                     <button onclick="selectImage('right')">Right</button>
+                    <button id="rightButton" onclick="selectImage('right')">Right</button>
                     <button onclick="saveSurvey()">Save</button>
+                    
                 </div>
             </div>
         </div>
@@ -74,6 +77,9 @@
                 document.getElementById('rightButton').innerText = 'Right';
             }
         }
+
+        // 반응형을 위한 리스너 추가
+        window.addEventListener('resize', checkForMobile);
 
         function loadRandomImages() {
             fetch('/api/images')
@@ -139,7 +145,7 @@
 
             document.getElementById('image-left').style.border = '';
             document.getElementById('image-right').style.border = '';
-            
+
             setTimeout(() => {
                 loadRandomImages();
             }, 300);
