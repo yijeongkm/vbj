@@ -60,7 +60,7 @@ body {
 }
 
 .image-container img {
-    max-width: 650px; /* 이미지 최대 너비를 800px로 설정 */
+    max-width: 700px; /* 이미지 최대 너비를 800px로 설정 */
     height: auto;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
