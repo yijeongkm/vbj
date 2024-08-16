@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    <title>Decline Survey</title>
+    <title>쇠퇴경관 주관적 인식조사</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <link rel="stylesheet" href="/assets/css/main.css" />
@@ -38,8 +38,6 @@
                     <img src="" alt="Landscape 1" id="image-left" style="width: 700px; height: auto;" />
                 </div>
                 <div class="buttons">
-                    <button onclick="selectImage('left')">Left</button>
-                    <button onclick="nextSelection()">Next</button>
                     <button id="leftButton" onclick="selectImage('left')">Left</button>
                 </div>
             </div>
@@ -49,12 +47,15 @@
                     <img src="" alt="Landscape 2" id="image-right" style="width: 700px; height: auto;" />
                 </div>
                 <div class="buttons">
-                    <button onclick="selectImage('right')">Right</button>
                     <button id="rightButton" onclick="selectImage('right')">Right</button>
-                    <button onclick="saveSurvey()">Save</button>
                     
                 </div>
             </div>
+        </div>
+        <!-- Next와 Save 버튼은 아래에 배치 -->
+        <div class="buttons">
+            <button onclick="nextSelection()">Next</button>
+            <button onclick="saveSurvey()">Save</button>
         </div>
     </div>
 
