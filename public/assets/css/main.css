@@ -16,7 +16,7 @@ body {
     padding: 40px;
     text-align: center;
     width: 90%;
-    max-width: 1400px; /* 더 큰 너비로 설정 */
+    max-width: 1600px; /* 더 큰 너비로 설정 */
     margin-top: 40px;
 }
 
@@ -44,6 +44,7 @@ body {
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
+    flex-wrap: wrap; /* 화면 크기에 따라 이미지가 자동으로 줄바꿈되도록 */
 }
 
 /* 이미지 컨테이너와 버튼을 감싸는 새 컨테이너 추가 */
@@ -114,4 +115,42 @@ body {
 
 .admin-button:hover {
     background-color: #0056b3;
+}
+
+
+/* 미디어 쿼리를 사용하여 반응형 디자인 적용 */
+@media (max-width: 768px) {
+    .images {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .image-button-group {
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .image-container img {
+        max-width: 100%; /* 작은 화면에서는 이미지가 화면에 맞게 조정되도록 */
+    }
+
+    .buttons {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .buttons button {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+
+    .image-container img {
+        max-width: 100%; /* 작은 화면에서도 이미지가 잘 보이도록 크기 조정 */
+    }
+
+    .container {
+        padding: 20px;
+    }
 }
