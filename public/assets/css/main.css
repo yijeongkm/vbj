@@ -42,32 +42,40 @@ body {
 
 .images {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     margin-bottom: 20px;
+    align-items: center; /* 이미지가 상하 중앙에 정렬되도록 조정 */
 }
 
-.images img {
-    max-width: 400px;  /* 이미지를 최대 너비 400px로 제한 */
-    height: auto;      /* 높이를 자동으로 조정하여 비율을 유지 */
-    display: block;
-    margin: 0 auto;    /* 이미지를 중앙에 배치 */
+.images {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    align-items: center;
 }
 
 
 .image-container {
     flex: 1;
-    margin: 0 20px; /* 이미지를 둘러싼 여백 조절 */
+    margin: 0 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .image-container img {
-    max-width: 100%;
+    max-width: 600px; /* 이미지 최대 너비 설정 */
+    height: auto;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
 }
 
 .buttons {
     display: flex;
-    justify-content: space-around;
+    flex-direction: column; /* 버튼을 세로로 정렬 */
+    align-items: center;
+    gap: 20px;
 }
 
 .buttons button {
@@ -75,9 +83,11 @@ body {
     border: none;
     color: white;
     padding: 15px 30px; /* 버튼의 크기 조절 */
+    display: block;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 16px; /* 버튼 텍스트 크기 조절 */
+    font-size: 16px;
+    min-width: 150px;
 }
 
 .buttons button:hover {

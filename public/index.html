@@ -33,22 +33,27 @@
 
         <div class="images">
             <div class="image-container" id="image-left-container">
-                <img src="" alt="Landscape 1" id="image-left" style="width: 300px; height: auto;" />
+                <img src="" alt="Landscape 1" id="image-left" />
             </div>
             <div class="image-container" id="image-right-container">
-                <img src="" alt="Landscape 2" id="image-right" style="width: 300px; height: auto;" />
+                <img src="" alt="Landscape 2" id="image-right" />
             </div>
         </div>
-        
+            
+        <!-- 두 그룹의 버튼을 나누어 배치 -->
         <div class="buttons">
-            <button onclick="selectImage('left')">Left</button>
-            <button onclick="selectImage('right')">Right</button>
+            <div class="group">
+                <button onclick="selectImage('left')">Left</button>
+                <button onclick="selectImage('right')">Right</button>
+        </div>
+        <div class="group">
             <button onclick="nextSelection()">Next</button>
             <button onclick="saveSurvey()">Save</button>
         </div>
     </div>
+</div>
 
-    <button class="admin-button" onclick="downloadResults()">Admin</button>
+<button class="admin-button" onclick="downloadResults()">Admin</button>
 
     <!-- 스크립트를 추가하기 위해 js 파일 경로를 올바르게 설정 -->
     <script>
