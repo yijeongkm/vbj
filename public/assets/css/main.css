@@ -47,7 +47,7 @@ body {
 }
 
 .images img {
-    max-width: 1024px;  /* 이미지를 최대 너비 400px로 제한 */
+    max-width: 800px;  /* 이미지를 최대 너비 400px로 제한 */
     height: auto;      /* 높이를 자동으로 조정하여 비율을 유지 */
     display: block;
     margin: 0 auto;    /* 이미지를 중앙에 배치 */
@@ -56,7 +56,7 @@ body {
 
 .image-container {
     flex: 1;
-    margin: 0 1024px; /* 이미지를 둘러싼 여백 조절 */
+    margin: 0 800px; /* 이미지를 둘러싼 여백 조절 */
 }
 
 .image-container img {
