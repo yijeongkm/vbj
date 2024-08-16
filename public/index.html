@@ -136,13 +136,13 @@
 
             console.log('Selection saved locally.');
             currentSelection = null; // Reset selection
-            // 이미지 선택 테두리 초기화
+
             document.getElementById('image-left').style.border = '';
             document.getElementById('image-right').style.border = '';
-            // 이미지를 로드할 때 새로운 setTimeout으로 딜레이를 주어 동기화 문제 해결
+            
             setTimeout(() => {
                 loadRandomImages();
-            }, 500);
+            }, 300);
         }
 
         function saveSurvey() {
