@@ -59,20 +59,21 @@
 
     <!-- 스크립트를 추가하기 위해 js 파일 경로를 올바르게 설정 -->
     <script>
-        // 모바일 기기 감지 및 버튼 이름 변경
-        function isMobile() {
-            return /Mobi|Android/i.test(navigator.userAgent);
-        }
-        
         window.onload = function() {
             loadRandomImages();
-
-            // 모바일 기기에서 열렸다면 버튼 이름을 변경
-            if (isMobile()) {
-                document.getElementById('left-btn').textContent = 'Up';
-                document.getElementById('right-btn').textContent = 'Down';
-            }
+            checkForMobile();
         };
+
+        function checkForMobile() {
+            // 모바일 기기 감지 로직
+            if (window.innerWidth <= 768) {
+                document.getElementById('leftButton').innerText = 'Up';
+                document.getElementById('rightButton').innerText = 'Down';
+            } else {
+                document.getElementById('leftButton').innerText = 'Left';
+                document.getElementById('rightButton').innerText = 'Right';
+            }
+        }
 
         function loadRandomImages() {
             fetch('/api/images')
@@ -186,6 +187,9 @@
                 alert('Incorrect password.');
             }
         }
+
+        // 화면 크기 변화에 따라 버튼 이름 업데이트
+        window.addEventListener('resize', checkForMobile);
     </script>
 </body>
 </html>
