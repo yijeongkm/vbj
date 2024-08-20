@@ -43,8 +43,14 @@ export default async function handler(req, res) {
         // 배열을 랜덤하게 섞음
         const shuffledImages = shuffleArray(imageFiles); // 셔플된 이미지 배열
 
-        // 랜덤으로 두 개의 이미지를 선택
-        const selectedImages = shuffledImages.slice(0, 2); // 두 개의 이미지 선택
+        // 셔플된 배열에서 두 개의 이미지를 랜덤하게 선택
+        const randomIndex1 = Math.floor(Math.random() * imageFiles.length);
+        let randomIndex2;
+        do {
+            randomIndex2 = Math.floor(Math.random() * imageFiles.length);
+        } while (randomIndex2 === randomIndex1); // 두 개의 인덱스가 겹치지 않게 하기
+
+        const selectedImages = [imageFiles[randomIndex1], imageFiles[randomIndex2]];
 
         // 선택된 이미지의 URL 생성
         const imageUrls = selectedImages.map(image => `https://${params.Bucket}.s3.${S3.config.region}.amazonaws.com/${image.Key}`);
