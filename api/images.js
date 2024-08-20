@@ -24,7 +24,7 @@ function shuffleArray(array) {
 // S3에서 파일 목록을 가져와 DynamoDB에 저장하는 함수
 async function loadFilesToDynamoDB() {
     const params = {
-        Bucket: 'declinesurvey',
+        Bucket: 'testdecline',
         Prefix: 'images/' // 이미지가 들어 있는 폴더 경로
     };
 
@@ -62,6 +62,8 @@ async function loadFilesToDynamoDB() {
                 }
             }));
 
+            console.log("Saving batch to DynamoDB:", batch); // 저장하려는 데이터를 로그로 출력
+
             const batchParams = {
                 RequestItems: {
                     'Decline-survey-Imagefiles': batch
@@ -71,7 +73,6 @@ async function loadFilesToDynamoDB() {
             try {
                 await dynamoDb.batchWrite(batchParams).promise();
                 console.log(`DynamoDB에 ${i + BATCH_SIZE}번째까지 데이터 저장 완료`);
-                console.log('DynamoDB 응답: ', response);
             } catch (err) {
                 console.error(`DynamoDB에 저장 중 오류 발생 (파일 범위: ${i}-${i + BATCH_SIZE}): `, err);
             }
