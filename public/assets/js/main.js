@@ -11,11 +11,15 @@ function loadRandomImages() {
             return response.json();
         })
         .then(data => {
+            console.log('Received images:', data.imageUrls);
             const images = data.imageUrls;
 
             if (images.length < 2) {
                 throw new Error('Not enough images to display');
             }
+
+            // 이미지 배열을 섞기
+            images = shuffleArray(images);
 
             // 두 개의 이미지를 각각의 컨테이너에 배치
             document.getElementById('image-left').src = images[0];
