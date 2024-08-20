@@ -20,6 +20,7 @@ function shuffleArray(array) {
 let cachedImageFiles = [];
 
 async function loadAndCacheImageFiles() {
+    console.log('파일 목록 로딩 시작...');  // 함수가 호출되는지 확인
     const params = {
         Bucket: 'declinesurvey',
         Prefix: 'images/' // 이미지가 들어 있는 폴더 경로
@@ -37,6 +38,7 @@ async function loadAndCacheImageFiles() {
             }).promise();
 
             imageFiles = imageFiles.concat(data.Contents.filter(item => /\.(jpg|jpeg|png|gif)$/.test(item.Key)));
+            console.log('현재까지 로드된 파일 수: ', imageFiles.length);  // 파일이 계속 추가되는지 확인
 
             isTruncated = data.IsTruncated;
             continuationToken = data.NextContinuationToken;
@@ -46,6 +48,7 @@ async function loadAndCacheImageFiles() {
         console.log('파일 목록 캐싱 완료: ', cachedImageFiles.length, '개 파일');
     } catch (err) {
         console.error('파일 목록 로드 오류: ', err);
+        throw new Error('S3 파일 로드 실패');
     }
 }
 
@@ -75,7 +78,7 @@ export default async function handler(req, res) {
 
         const imageUrls = selectedImages.map(image => `https://${cloudFrontDomain}/${image.Key}`);
 
-        console.log('Selected images:', imageUrls);
+        console.log('선택된 이미지 URL들: ', imageUrls);
 
         // 클라이언트에 두 개의 이미지 URL 반환
         res.status(200).json({ imageUrls });
