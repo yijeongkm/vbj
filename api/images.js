@@ -58,7 +58,6 @@ async function loadFilesToDynamoDB() {
             const batch = imageFiles.slice(i, i + BATCH_SIZE).map(file => ({
                 PutRequest: {
                     Item: {
-                        id: file.Key,
                         images: file.Key
                     }
                 }
@@ -75,14 +74,14 @@ async function loadFilesToDynamoDB() {
                 console.log(`${i + batch.length}개의 파일이 DynamoDB에 저장되었습니다.`);
             } catch (err) {
                 console.error(`DynamoDB에 저장 중 오류 발생 (파일 범위: ${i}-${i + batch.length}): `, err);
-            }
+            }            
         }
 
         console.log('DynamoDB에 파일 목록 저장 완료');
     } catch (err) {
         console.error('DynamoDB에 파일 목록 저장 중 오류: ', err);
     }
-}
+}   
 
 // DynamoDB에서 랜덤한 두 개의 파일을 가져오는 함수
 async function getRandomImagesFromDynamoDB() {
