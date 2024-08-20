@@ -2,6 +2,12 @@ window.onload = function() {
     loadRandomImages();
 };
 
+function preloadImage(url) {
+    const img = new Image();
+    img.src = url; // 이미지를 미리 로드하기 위해 URL을 할당
+    return img; // 로드된 이미지 객체 반환 (필요 시 활용 가능)
+}
+
 function loadRandomImages() {
     fetch('/api/images')
         .then(response => {
@@ -24,7 +30,12 @@ function loadRandomImages() {
             // 두 개의 이미지를 각각의 컨테이너에 배치
             document.getElementById('image-left').src = images[0];
             document.getElementById('image-right').src = images[1];
-        })
+
+            // 이미지 미리 로드 (캐싱 효과)
+            preloadImage(images[0]);
+            preloadImage(images[1]);
+        })        
+
         .catch(error => console.error('Error fetching images:', error));
 }
 
@@ -81,7 +92,7 @@ function nextSelection() {
     // 이미지를 로드할 때 새로운 setTimeout으로 딜레이를 주어 동기화 문제 해결
     setTimeout(() => {
         loadRandomImages();
-    }, 500);
+    }, 300);
 }
 
 function saveSurvey() {
