@@ -70,8 +70,14 @@ async function loadFilesToDynamoDB() {
             };
 
             try {
-                await dynamoDb.batchWrite(batchParams).promise();
+                const result = await dynamoDb.batchWrite(batchParams).promise();
                 console.log(`${i + batch.length}개의 파일이 DynamoDB에 저장되었습니다.`);
+
+                // 저장되지 않은 항목 로그 출력
+                if (result.UnprocessedItems && Object.keys(result.UnprocessedItems).length > 0) {
+                    console.log('DynamoDB에 저장되지 않은 항목들:', result.UnprocessedItems);
+                }
+
             } catch (err) {
                 console.error(`DynamoDB에 저장 중 오류 발생 (파일 범위: ${i}-${i + batch.length}): `, err);
             }            
