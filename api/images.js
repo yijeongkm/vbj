@@ -29,6 +29,7 @@ async function loadFilesToDynamoDB() {
     };
 
     try {
+        console.log("S3에서 파일 목록을 가져오는 중...");
         let imageFiles = [];
         let isTruncated = true;
         let continuationToken = null;
@@ -44,6 +45,8 @@ async function loadFilesToDynamoDB() {
             isTruncated = data.IsTruncated;
             continuationToken = data.NextContinuationToken;
         }
+
+        console.log(`총 ${imageFiles.length}개의 파일이 발견되었습니다. 이제 DynamoDB에 저장합니다.`);
 
         // 파일 목록을 DynamoDB에 저장
         for (const file of imageFiles) {
