@@ -7,6 +7,13 @@ const S3 = new AWS.S3({
     region: 'ap-northeast-2' // 서울 리전
 });
 
+// DynamoDB 인스턴스 생성
+const dynamoDB = new AWS.DynamoDB.DocumentClient({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    region: 'ap-northeast-2' // 서울 리전
+});
+
 // 배열을 랜덤하게 섞는 함수
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -16,11 +23,8 @@ function shuffleArray(array) {
     return array;
 }
 
-// 파일 목록 캐싱을 위한 변수
-let cachedImageFiles = [];
-
-async function loadAndCacheImageFiles() {
-    console.log('파일 목록 로딩 시작...');  // 함수가 호출되는지 확인
+// S3에서 파일 목록을 가져와 DynamoDB에 저장하는 함수
+async function loadFilesToDynamoDB() {
     const params = {
         Bucket: 'declinesurvey',
         Prefix: 'images/' // 이미지가 들어 있는 폴더 경로
@@ -38,52 +42,68 @@ async function loadAndCacheImageFiles() {
             }).promise();
 
             imageFiles = imageFiles.concat(data.Contents.filter(item => /\.(jpg|jpeg|png|gif)$/.test(item.Key)));
-            console.log('현재까지 로드된 파일 수: ', imageFiles.length);  // 파일이 계속 추가되는지 확인
 
             isTruncated = data.IsTruncated;
             continuationToken = data.NextContinuationToken;
         }
 
-        cachedImageFiles = imageFiles; // 파일 목록을 캐시에 저장
-        console.log('파일 목록 캐싱 완료: ', cachedImageFiles.length, '개 파일');
+        // 파일 목록을 DynamoDB에 저장
+        for (const file of imageFiles) {
+            await dynamoDB.put({
+                TableName: 'Decline-survey-Imagefiles',
+                Item: {
+                    images: file.Key // Partition Key로 파일 이름 사용
+                }
+            }).promise();
+        }
+
+        console.log('DynamoDB에 파일 목록 저장 완료');
     } catch (err) {
-        console.error('파일 목록 로드 오류: ', err);
-        throw new Error('S3 파일 로드 실패');
+        console.error('DynamoDB에 파일 목록 저장 중 오류: ', err);
     }
 }
 
-// 강제로 캐시를 다시 로드하는 함수
-async function ensureImagesAreCached() {
-    if (cachedImageFiles.length === 0) {
-        console.log('캐시가 비어 있어 파일 목록을 다시 로드합니다...');
-        await loadAndCacheImageFiles();
+// DynamoDB에서 랜덤한 두 개의 파일을 가져오는 함수
+async function getRandomImagesFromDynamoDB() {
+    try {
+        // DynamoDB에서 모든 파일 목록을 불러오기
+        const data = await dynamoDB.scan({
+            TableName: 'Decline-survey-Imagefiles'
+        }).promise();
+
+        const imageFiles = data.Items.map(item => item.images);
+
+        if (imageFiles.length < 2) {
+            throw new Error('Not enough images in DynamoDB');
+        }
+
+        // 배열을 랜덤하게 섞음
+        const shuffledImages = shuffleArray(imageFiles);
+
+        // 랜덤으로 두 개의 이미지를 선택
+        return shuffledImages.slice(0, 2);
+    } catch (err) {
+        console.error('DynamoDB에서 이미지 가져오기 오류: ', err);
+        throw err;
     }
 }
+
+// 서버가 시작될 때 S3에서 파일 목록을 로드하고 DynamoDB에 저장 (필요할 때만 호출)
+loadFilesToDynamoDB();
 
 export default async function handler(req, res) {
     try {
-        await ensureImagesAreCached();
-
-        if (cachedImageFiles.length < 2) {
-            console.error('Not enough images in cache');
-            return res.status(500).json({ error: 'Not enough images in cache' });
-        }
-
-        // 캐시된 목록에서 두 개의 이미지를 랜덤하게 선택
-        const shuffledImages = shuffleArray([...cachedImageFiles]); // 캐시된 목록 복사 후 섞기
-        const selectedImages = shuffledImages.slice(0, 2);
+        // DynamoDB에서 랜덤한 두 개의 이미지를 가져오기
+        const selectedImages = await getRandomImagesFromDynamoDB();
 
         // CloudFront 배포 도메인 이름을 여기에 넣으세요.
         const cloudFrontDomain = 'd2icbqhqqbhym1.cloudfront.net'; // CloudFront 도메인
 
-        const imageUrls = selectedImages.map(image => `https://${cloudFrontDomain}/${image.Key}`);
-
-        console.log('선택된 이미지 URL들: ', imageUrls);
+        const imageUrls = selectedImages.map(image => `https://${cloudFrontDomain}/${image}`);
 
         // 클라이언트에 두 개의 이미지 URL 반환
         res.status(200).json({ imageUrls });
     } catch (err) {
-        console.error('Error fetching image URLs: ', err);
         res.status(500).json({ error: 'Error fetching image URLs' });
     }
 }
