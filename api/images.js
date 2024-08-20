@@ -7,6 +7,15 @@ const S3 = new AWS.S3({
     region: 'ap-northeast-2' // 서울 리전
 });
 
+// 배열을 랜덤하게 섞는 함수
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
 export default async function handler(req, res) {
     const params = {
         Bucket: 'declinesurvey',
@@ -24,8 +33,10 @@ export default async function handler(req, res) {
             return res.status(404).json({ error: 'Not enough images found' });
         }
 
+        // 배열을 랜덤하게 섞음
+        const shuffledImages = shuffleArray(imageFiles); // 셔플된 이미지 배열
+
         // 랜덤으로 두 개의 이미지를 선택
-        const shuffledImages = imageFiles.sort(() => 0.5 - Math.random());
         const selectedImages = shuffledImages.slice(0, 2); // 두 개의 이미지 선택
 
         // 선택된 이미지의 URL 생성
