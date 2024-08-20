@@ -50,19 +50,31 @@ async function loadFilesToDynamoDB() {
 
         console.log(`총 ${imageFiles.length}개의 파일이 발견되었습니다. 이제 DynamoDB에 저장합니다.`);
 
-        // 파일 목록을 DynamoDB에 저장
-        for (const file of imageFiles) {
-            try {
-                await dynamoDb.put({
-                    TableName: 'Decline-survey-Imagefiles',
+
+        // 파일 목록을 BatchWrite로 DynamoDB에 저장
+        const BATCH_SIZE = 25; // DynamoDB BatchWrite는 한 번에 최대 25개 항목만 처리 가능
+
+        for (let i = 0; i < imageFiles.length; i += BATCH_SIZE) {
+            const batch = imageFiles.slice(i, i + BATCH_SIZE).map(file => ({
+                PutRequest: {
                     Item: {
                         id: file.Key,
                         images: file.Key
                     }
-                }).promise();
-                console.log(`${file.Key} 저장 완료`);
+                }
+            }));
+
+            const batchParams = {
+                RequestItems: {
+                    'Decline-survey-Imagefiles': batch
+                }
+            };
+
+            try {
+                await dynamoDb.batchWrite(batchParams).promise();
+                console.log(`${i + batch.length}개의 파일이 DynamoDB에 저장되었습니다.`);
             } catch (err) {
-                console.error(`${file.Key} 저장 중 오류 발생: `, err);
+                console.error(`DynamoDB에 저장 중 오류 발생 (파일 범위: ${i}-${i + batch.length}): `, err);
             }
         }
 
