@@ -24,7 +24,7 @@ function shuffleArray(array) {
 // S3에서 파일 목록을 가져와 DynamoDB에 저장하는 함수
 async function loadFilesToDynamoDB() {
     const params = {
-        Bucket: 'testdecline',
+        Bucket: 'declinesurvey',
         Prefix: 'images/' // 이미지가 들어 있는 폴더 경로
     };
 
@@ -51,7 +51,7 @@ async function loadFilesToDynamoDB() {
         console.log(`총 ${imageFiles.length}개의 파일이 발견되었습니다. 이제 DynamoDB에 저장합니다.`);
 
         // BatchWrite로 파일 목록을 DynamoDB에 저장
-        const BATCH_SIZE = 25;
+        const BATCH_SIZE = 10;
 
         for (let i = 0; i < imageFiles.length; i += BATCH_SIZE) {
             const batch = imageFiles.slice(i, i + BATCH_SIZE).map(file => ({
