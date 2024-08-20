@@ -92,7 +92,7 @@ function nextSelection() {
     // 이미지를 로드할 때 새로운 setTimeout으로 딜레이를 주어 동기화 문제 해결
     setTimeout(() => {
         loadRandomImages();
-    }, 300);
+    }, 50);
 }
 
 function saveSurvey() {
