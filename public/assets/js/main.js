@@ -3,40 +3,31 @@ window.onload = function() {
 };
 
 function preloadImage(url) {
-    const img = new Image();
-    img.src = url; // 이미지를 미리 로드하기 위해 URL을 할당
-    return img; // 로드된 이미지 객체 반환 (필요 시 활용 가능)
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.src = url;
+        img.onload = resolve;
+        img.onerror = reject;
+    });
 }
 
-function loadRandomImages() {
-    fetch('/api/images')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok ' + response.statusText);
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Received images:', data.imageUrls);
-            const images = data.imageUrls;
+async function loadRandomImages() {
+    try {
+        const response = await fetch('/api/images');
+        if (!response.ok) throw new Error('Network response was not ok ' + response.statusText);
+        
+        const data = await response.json();
+        const images = data.imageUrls;
 
-            if (images.length < 2) {
-                throw new Error('Not enough images to display');
-            }
+        if (images.length < 2) throw new Error('Not enough images to display');
 
-            // 이미지 배열을 섞기
-            images = shuffleArray(images);
-
-            // 두 개의 이미지를 각각의 컨테이너에 배치
-            document.getElementById('image-left').src = images[0];
-            document.getElementById('image-right').src = images[1];
-
-            // 이미지 미리 로드 (캐싱 효과)
-            preloadImage(images[0]);
-            preloadImage(images[1]);
-        })        
-
-        .catch(error => console.error('Error fetching images:', error));
+        // 미리 이미지 로드
+        await Promise.all([preloadImage(images[0]), preloadImage(images[1])]);
+        document.getElementById('image-left').src = images[0];
+        document.getElementById('image-right').src = images[1];
+    } catch (error) {
+        console.error('Error fetching images:', error);
+    }
 }
 
 // 배열을 랜덤하게 섞는 함수
