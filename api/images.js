@@ -29,7 +29,9 @@ async function loadFilesToDynamoDB() {
     };
 
     try {
+
         console.log("S3에서 파일 목록을 가져오는 중...");
+
         let imageFiles = [];
         let isTruncated = true;
         let continuationToken = null;
@@ -41,7 +43,7 @@ async function loadFilesToDynamoDB() {
             }).promise();
 
             imageFiles = imageFiles.concat(data.Contents.filter(item => /\.(jpg|jpeg|png|gif)$/.test(item.Key)));
-
+            console.log(`현재까지 로드된 파일 수: ${imageFiles.length}`);
             isTruncated = data.IsTruncated;
             continuationToken = data.NextContinuationToken;
         }
@@ -50,13 +52,18 @@ async function loadFilesToDynamoDB() {
 
         // 파일 목록을 DynamoDB에 저장
         for (const file of imageFiles) {
-            await dynamoDb.put({
-                TableName: 'Decline-survey-Imagefiles',
-                Item: {
-                    id: file.Key, // 각 파일에 대해 고유 키로 사용
-                    images: file.Key // 파일 이름을 이미지 필드로 저장
-                }
-            }).promise();
+            try {
+                await dynamoDb.put({
+                    TableName: 'Decline-survey-Imagefiles',
+                    Item: {
+                        id: file.Key,
+                        images: file.Key
+                    }
+                }).promise();
+                console.log(`${file.Key} 저장 완료`);
+            } catch (err) {
+                console.error(`${file.Key} 저장 중 오류 발생: `, err);
+            }
         }
 
         console.log('DynamoDB에 파일 목록 저장 완료');
