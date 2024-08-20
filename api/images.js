@@ -26,9 +26,8 @@ async function loadAndCacheImageFiles() {
     };
 
     try {
-        // 모든 객체를 가져오기 위한 반복 로직
         let imageFiles = [];
-        let isTruncated = true; // 더 많은 파일이 있는지 확인하는 플래그
+        let isTruncated = true;
         let continuationToken = null;
 
         while (isTruncated) {
@@ -56,6 +55,7 @@ loadAndCacheImageFiles();
 export default function handler(req, res) {
     try {
         if (cachedImageFiles.length < 2) {
+            console.error('Not enough images in cache');
             return res.status(500).json({ error: 'Not enough images in cache' });
         }
 
@@ -63,15 +63,17 @@ export default function handler(req, res) {
         const shuffledImages = shuffleArray([...cachedImageFiles]); // 캐시된 목록 복사 후 섞기
         const selectedImages = shuffledImages.slice(0, 2);
 
-    // CloudFront 배포 도메인 이름을 여기에 넣으세요.
-    const cloudFrontDomain = 'd2icbqhqqbhym1.cloudfront.net'; 
+        // CloudFront 배포 도메인 이름을 여기에 넣으세요.
+        const cloudFrontDomain = 'd2icbqhqqbhym1.cloudfront.net'; // CloudFront 도메인
 
-    const imageUrls = selectedImages.map(image => `https://${cloudFrontDomain}/${image.Key}`);
+        const imageUrls = selectedImages.map(image => `https://${cloudFrontDomain}/${image.Key}`);
+        
+        console.log('Selected images:', imageUrls);
 
         // 클라이언트에 두 개의 이미지 URL 반환
         res.status(200).json({ imageUrls });
     } catch (err) {
-        console.error(err);
+        console.error('Error fetching image URLs: ', err);
         res.status(500).json({ error: 'Error fetching image URLs' });
     }
 }
