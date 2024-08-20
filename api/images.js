@@ -16,7 +16,10 @@ function shuffleArray(array) {
     return array;
 }
 
-export default async function handler(req, res) {
+// 파일 목록 캐싱을 위한 변수
+let cachedImageFiles = [];
+
+async function loadAndCacheImageFiles() {
     const params = {
         Bucket: 'declinesurvey',
         Prefix: 'images/' // 이미지가 들어 있는 폴더 경로
@@ -31,26 +34,34 @@ export default async function handler(req, res) {
         while (isTruncated) {
             const data = await S3.listObjectsV2({
                 ...params,
-                ContinuationToken: continuationToken // 이어서 파일을 가져오기 위한 토큰
+                ContinuationToken: continuationToken
             }).promise();
 
             imageFiles = imageFiles.concat(data.Contents.filter(item => /\.(jpg|jpeg|png|gif)$/.test(item.Key)));
 
-            isTruncated = data.IsTruncated; // 더 많은 파일이 있으면 true
-            continuationToken = data.NextContinuationToken; // 다음 호출을 위한 토큰 설정
+            isTruncated = data.IsTruncated;
+            continuationToken = data.NextContinuationToken;
         }
 
-        // 배열을 랜덤하게 섞음
-        const shuffledImages = shuffleArray(imageFiles); // 셔플된 이미지 배열
+        cachedImageFiles = imageFiles; // 파일 목록을 캐시에 저장
+        console.log('파일 목록 캐싱 완료: ', cachedImageFiles.length, '개 파일');
+    } catch (err) {
+        console.error('파일 목록 로드 오류: ', err);
+    }
+}
 
-        // 셔플된 배열에서 두 개의 이미지를 랜덤하게 선택
-        const randomIndex1 = Math.floor(Math.random() * imageFiles.length);
-        let randomIndex2;
-        do {
-            randomIndex2 = Math.floor(Math.random() * imageFiles.length);
-        } while (randomIndex2 === randomIndex1); // 두 개의 인덱스가 겹치지 않게 하기
+// 서버 시작 시 파일 목록을 캐싱
+loadAndCacheImageFiles();
 
-        const selectedImages = [imageFiles[randomIndex1], imageFiles[randomIndex2]];
+export default function handler(req, res) {
+    try {
+        if (cachedImageFiles.length < 2) {
+            return res.status(500).json({ error: 'Not enough images in cache' });
+        }
+
+        // 캐시된 목록에서 두 개의 이미지를 랜덤하게 선택
+        const shuffledImages = shuffleArray([...cachedImageFiles]); // 캐시된 목록 복사 후 섞기
+        const selectedImages = shuffledImages.slice(0, 2);
 
     // CloudFront 배포 도메인 이름을 여기에 넣으세요.
     const cloudFrontDomain = 'd2icbqhqqbhym1.cloudfront.net'; 
