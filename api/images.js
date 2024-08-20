@@ -52,8 +52,10 @@ export default async function handler(req, res) {
 
         const selectedImages = [imageFiles[randomIndex1], imageFiles[randomIndex2]];
 
-        // 선택된 이미지의 URL 생성
-        const imageUrls = selectedImages.map(image => `https://${params.Bucket}.s3.${S3.config.region}.amazonaws.com/${image.Key}`);
+    // CloudFront 배포 도메인 이름을 여기에 넣으세요.
+    const cloudFrontDomain = 'https://d2icbqhqqbhym1.cloudfront.net'; 
+
+    const imageUrls = selectedImages.map(image => `https://${cloudFrontDomain}/${image.Key}`);
 
         // 클라이언트에 두 개의 이미지 URL 반환
         res.status(200).json({ imageUrls });
