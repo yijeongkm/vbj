@@ -29,13 +29,13 @@ async function loadFilesToDynamoDB() {
     };
 
     try {
-
         console.log("S3에서 파일 목록을 가져오는 중...");
 
         let imageFiles = [];
         let isTruncated = true;
         let continuationToken = null;
 
+        // 모든 파일 목록을 가져올 때까지 반복
         while (isTruncated) {
             const data = await S3.listObjectsV2({
                 ...params,
@@ -50,14 +50,14 @@ async function loadFilesToDynamoDB() {
 
         console.log(`총 ${imageFiles.length}개의 파일이 발견되었습니다. 이제 DynamoDB에 저장합니다.`);
 
-
-        // 파일 목록을 BatchWrite로 DynamoDB에 저장
-        const BATCH_SIZE = 25; // DynamoDB BatchWrite는 한 번에 최대 25개 항목만 처리 가능
+        // BatchWrite로 파일 목록을 DynamoDB에 저장
+        const BATCH_SIZE = 25;
 
         for (let i = 0; i < imageFiles.length; i += BATCH_SIZE) {
             const batch = imageFiles.slice(i, i + BATCH_SIZE).map(file => ({
                 PutRequest: {
                     Item: {
+                        id: `${i + Math.random().toString(36).substr(2, 5)}`,  // 임의의 id 추가
                         images: file.Key
                     }
                 }
@@ -92,6 +92,8 @@ async function getRandomImagesFromDynamoDB() {
         }).promise();
 
         const imageFiles = data.Items.map(item => item.images);
+
+        console.log(`DynamoDB에서 로드된 파일 수: ${imageFiles.length}`);
 
         if (imageFiles.length < 2) {
             throw new Error('Not enough images in DynamoDB');
