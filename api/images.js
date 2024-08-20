@@ -23,14 +23,21 @@ export default async function handler(req, res) {
     };
 
     try {
-        // S3에서 폴더 내의 모든 파일 목록 가져오기
-        const data = await S3.listObjectsV2(params).promise();
+        // 모든 객체를 가져오기 위한 반복 로직
+        let imageFiles = [];
+        let isTruncated = true; // 더 많은 파일이 있는지 확인하는 플래그
+        let continuationToken = null;
 
-        // 이미지 파일만 필터링
-        const imageFiles = data.Contents.filter(item => /\.(jpg|jpeg|png|gif)$/.test(item.Key));
+        while (isTruncated) {
+            const data = await S3.listObjectsV2({
+                ...params,
+                ContinuationToken: continuationToken // 이어서 파일을 가져오기 위한 토큰
+            }).promise();
 
-        if (imageFiles.length < 2) {
-            return res.status(404).json({ error: 'Not enough images found' });
+            imageFiles = imageFiles.concat(data.Contents.filter(item => /\.(jpg|jpeg|png|gif)$/.test(item.Key)));
+
+            isTruncated = data.IsTruncated; // 더 많은 파일이 있으면 true
+            continuationToken = data.NextContinuationToken; // 다음 호출을 위한 토큰 설정
         }
 
         // 배열을 랜덤하게 섞음
