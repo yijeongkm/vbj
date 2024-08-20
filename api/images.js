@@ -57,7 +57,6 @@ async function loadFilesToDynamoDB() {
             const batch = imageFiles.slice(i, i + BATCH_SIZE).map(file => ({
                 PutRequest: {
                     Item: {
-                        id: `${i + Math.random().toString(36).substr(2, 5)}`,  // 임의의 id 추가
                         images: file.Key
                     }
                 }
@@ -72,6 +71,7 @@ async function loadFilesToDynamoDB() {
             try {
                 await dynamoDb.batchWrite(batchParams).promise();
                 console.log(`DynamoDB에 ${i + BATCH_SIZE}번째까지 데이터 저장 완료`);
+                console.log('DynamoDB 응답: ', response);
             } catch (err) {
                 console.error(`DynamoDB에 저장 중 오류 발생 (파일 범위: ${i}-${i + BATCH_SIZE}): `, err);
             }
