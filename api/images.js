@@ -49,11 +49,18 @@ async function loadAndCacheImageFiles() {
     }
 }
 
-// 서버 시작 시 파일 목록을 캐싱
-loadAndCacheImageFiles();
+// 강제로 캐시를 다시 로드하는 함수
+async function ensureImagesAreCached() {
+    if (cachedImageFiles.length === 0) {
+        console.log('캐시가 비어 있어 파일 목록을 다시 로드합니다...');
+        await loadAndCacheImageFiles();
+    }
+}
 
-export default function handler(req, res) {
+export default async function handler(req, res) {
     try {
+        await ensureImagesAreCached();
+
         if (cachedImageFiles.length < 2) {
             console.error('Not enough images in cache');
             return res.status(500).json({ error: 'Not enough images in cache' });
@@ -67,7 +74,7 @@ export default function handler(req, res) {
         const cloudFrontDomain = 'd2icbqhqqbhym1.cloudfront.net'; // CloudFront 도메인
 
         const imageUrls = selectedImages.map(image => `https://${cloudFrontDomain}/${image.Key}`);
-        
+
         console.log('Selected images:', imageUrls);
 
         // 클라이언트에 두 개의 이미지 URL 반환
