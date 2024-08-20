@@ -53,7 +53,7 @@ export default async function handler(req, res) {
         const selectedImages = [imageFiles[randomIndex1], imageFiles[randomIndex2]];
 
     // CloudFront 배포 도메인 이름을 여기에 넣으세요.
-    const cloudFrontDomain = 'https://d2icbqhqqbhym1.cloudfront.net'; 
+    const cloudFrontDomain = 'd2icbqhqqbhym1.cloudfront.net'; 
 
     const imageUrls = selectedImages.map(image => `https://${cloudFrontDomain}/${image.Key}`);
 
