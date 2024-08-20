@@ -1,14 +1,12 @@
 import AWS from 'aws-sdk';
 
-// S3 인스턴스 생성
-const S3 = new AWS.S3({
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    region: 'ap-northeast-2' // 서울 리전
+// DynamoDB 클라이언트 생성
+const dynamoDb = new AWS.DynamoDB.DocumentClient({
+    region: 'ap-northeast-2' // 리전 설정
 });
 
-// DynamoDB 인스턴스 생성
-const dynamoDB = new AWS.DynamoDB.DocumentClient({
+// S3 인스턴스 생성
+const S3 = new AWS.S3({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     region: 'ap-northeast-2' // 서울 리전
@@ -49,10 +47,11 @@ async function loadFilesToDynamoDB() {
 
         // 파일 목록을 DynamoDB에 저장
         for (const file of imageFiles) {
-            await dynamoDB.put({
+            await dynamoDb.put({
                 TableName: 'Decline-survey-Imagefiles',
                 Item: {
-                    images: file.Key // Partition Key로 파일 이름 사용
+                    id: file.Key, // 각 파일에 대해 고유 키로 사용
+                    images: file.Key // 파일 이름을 이미지 필드로 저장
                 }
             }).promise();
         }
@@ -67,7 +66,7 @@ async function loadFilesToDynamoDB() {
 async function getRandomImagesFromDynamoDB() {
     try {
         // DynamoDB에서 모든 파일 목록을 불러오기
-        const data = await dynamoDB.scan({
+        const data = await dynamoDb.scan({
             TableName: 'Decline-survey-Imagefiles'
         }).promise();
 
