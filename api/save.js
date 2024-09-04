@@ -10,8 +10,8 @@ export default async function handler(req, res) {
     const newResult = req.body; // 새로운 설문 결과 데이터
 
     const params = {
-        Bucket: 'declinesurvey', // S3 버킷 이름
-        Key: 'declinesurvey-results.json', // 저장할 파일 이름
+        Bucket: 'realsurvey', // S3 버킷 이름
+        Key: 'survey-results.json', // 저장할 파일 이름
     };
 
     try {
