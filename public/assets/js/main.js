@@ -129,6 +129,7 @@ function nextSelection() {
         // 문항 카운트 증가
         currentQuestion++;
         document.getElementById('question-count').textContent = `문항 ${currentQuestion}/${totalQuestions}`;
+        console.log("Current Question: ", currentQuestion); // 현재 문항 번호 확인
 
         // **수정된 부분**: 문항이 30일 때 Save 버튼을 보여줌
         if (currentQuestion === totalQuestions) {
