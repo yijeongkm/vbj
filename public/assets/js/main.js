@@ -102,7 +102,6 @@ function nextSelection() {
         selected: currentSelection,
         leftImage: leftImage,
         rightImage: rightImage
-        timestamp: new Date().toISOString()
     };
 
     surveyResults.push(result);
