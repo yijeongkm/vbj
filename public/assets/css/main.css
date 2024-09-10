@@ -36,8 +36,10 @@ body {
 }
 
 .user-info select {
+    font-size: 18px; /* 텍스트 크기 증가 */
+    width: 200px;    /* 선택 상자의 너비 증가 */
     margin-right: 20px;
-    padding: 5px; /* 선택 상자의 크기 조절 */
+    padding: 10px; /* 선택 상자의 크기 조절 */
 }
 
 .images {
