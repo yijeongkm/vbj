@@ -188,14 +188,20 @@ function saveSurvey() {
         ...surveyResults[surveyResults.length - 1],  // 마지막 문항 결과
         end: true  // 마지막 문항에 end 추가
     };
+    surveyResults[surveyResults.length - 1] = lastResult;
 
-    // 서버에 마지막 결과와 end만 저장 (중복 저장 방지)
+    const finalResult = {
+        results: surveyResults,
+        savedAt: new Date().toISOString()
+    };
+    
+    // 서버에 마지막 결과와 end만 저장
     fetch('/api/save', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(lastResult)  // 마지막 문항과 end만 저장
+        body: JSON.stringify(finalResult)  // 마지막 문항과 end를 포함한 전체 결과 저장
     })
     .then(response => {
         if (!response.ok) {
