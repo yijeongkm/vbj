@@ -104,8 +104,6 @@ function nextSelection() {
         rightImage: rightImage
     };
 
-    surveyResults.push(result);
-
     fetch('/api/save', {
         method: 'POST',
         headers: {
@@ -122,6 +120,7 @@ function nextSelection() {
     .then(data => {
         console.log('Result saved to server:', data);
 
+        // 저장 완료 후 다음 작업 진행
         surveyResults.push(result);
         currentSelection = null;
         document.getElementById('image-left').style.border = '';
@@ -131,13 +130,16 @@ function nextSelection() {
         currentQuestion++;
         document.getElementById('question-count').textContent = `문항 ${currentQuestion}/${totalQuestions}`;
 
-        // 30번째 문항에서 Save 버튼 표시
+        // **수정된 부분**: 문항이 30일 때 Save 버튼을 보여줌
         if (currentQuestion === totalQuestions) {
             document.getElementById('save-btn').style.display = 'inline-block';
             document.getElementById('next-btn').style.display = 'none';
+            console.log("30번째 문항 - Next 버튼 숨기고 Save 버튼 보이기");
         } else {
+            document.getElementById('next-btn').style.display = 'inline-block'; // Next 버튼을 다시 보임
+            document.getElementById('save-btn').style.display = 'none'; // Save 버튼 숨기기
             setTimeout(() => {
-                loadRandomImages();
+                loadRandomImages();  // 다음 이미지를 로드
             }, 300);
         }
     })
