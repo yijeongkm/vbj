@@ -113,23 +113,18 @@ function nextSelection() {
     document.getElementById('image-left').style.border = '';
     document.getElementById('image-right').style.border = '';
 
-    // 문항 업데이트 및 30번째 문항에서 Save 버튼 표시 (수정된 부분)
-    if (currentQuestion < totalQuestions) {
-        currentQuestion++;
-        updateQuestionCount(); // 문항 업데이트
+    // 문항 업데이트
+    currentQuestion++;
+    updateQuestionCount(); // 문항 업데이트
 
-        // Save 버튼 숨김 (1~29번째 문항에서)
-        document.getElementById('save-btn').style.display = 'none'; // Save 버튼 숨김
-
-        // 다음 문항으로 넘어가서 이미지 로드
-        setTimeout(() => {
-            loadRandomImages();
-        }, 50);
-    }
-
-    // 30번째 문항일 때 Save 버튼을 표시 (수정된 부분)
+    // 30번째 문항일 때 Save 버튼을 표시
     if (currentQuestion === totalQuestions) {
         document.getElementById('save-btn').style.display = 'inline-block'; // Save 버튼 표시
+    } else {
+        document.getElementById('save-btn').style.display = 'none'; // 30번째 문항이 아닐 때는 숨김
+        setTimeout(() => {
+            loadRandomImages();  // 다음 이미지를 로드
+        }, 50);
     }
 }
 
