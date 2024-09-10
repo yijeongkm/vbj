@@ -24,7 +24,7 @@ function shuffleArray(array) {
 // S3에서 파일 목록을 가져와 DynamoDB에 저장하는 함수
 async function loadFilesToDynamoDB() {
     const params = {
-        Bucket: 'realsurvey',
+        Bucket: 'declinesurvey',
         Prefix: 'images/' // 이미지가 들어 있는 폴더 경로
     };
 
