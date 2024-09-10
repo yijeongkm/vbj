@@ -102,10 +102,29 @@ function nextSelection() {
         selected: currentSelection,
         leftImage: leftImage,
         rightImage: rightImage
-        time: new Date().toISOString()
+        timestamp: new Date().toISOString()
     };
 
     surveyResults.push(result);
+
+    // Next 버튼 클릭 시 서버에 자동으로 저장 (추가된 부분)
+    fetch('/api/save', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(result)  // 각 결과를 서버에 저장
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+        }
+        return response.text();
+    })
+    .then(data => {
+        console.log('Result saved to server:', data);
+    })
+    .catch(error => console.error('Error saving result:', error));
 
     console.log('Selection saved locally.');
     currentSelection = null; // Reset selection
@@ -117,11 +136,13 @@ function nextSelection() {
     currentQuestion++;
     updateQuestionCount(); // 문항 업데이트
 
-    // 30번째 문항일 때 Save 버튼을 표시
+    // 30번째 문항일 때 Save 버튼만 남기고 Next 버튼을 숨김
     if (currentQuestion === totalQuestions) {
         document.getElementById('save-btn').style.display = 'inline-block'; // Save 버튼 표시
+        document.getElementById('next-btn').style.display = 'none'; // Next 버튼 숨김 (추가된 부분)
     } else {
         document.getElementById('save-btn').style.display = 'none'; // 30번째 문항이 아닐 때는 숨김
+        document.getElementById('next-btn').style.display = 'inline-block'; // Next 버튼 표시
         setTimeout(() => {
             loadRandomImages();  // 다음 이미지를 로드
         }, 50);
@@ -163,17 +184,18 @@ function saveSurvey() {
         return;
     }
 
-    const finalResult = {
-        results: surveyResults,
-        savedAt: new Date().toISOString()
+    const lastResult = {
+        ...surveyResults[surveyResults.length - 1],  // 마지막 문항 결과
+        end: true  // 마지막 문항에 end 추가
     };
 
+    // 서버에 마지막 결과와 end만 저장 (중복 저장 방지)
     fetch('/api/save', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(finalResult)
+        body: JSON.stringify(lastResult)  // 마지막 문항과 end만 저장
     })
     .then(response => {
         if (!response.ok) {
