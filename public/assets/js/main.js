@@ -122,30 +122,30 @@ function nextSelection() {
     })
     .then(data => {
         console.log('Result saved to server:', data);
+
+        // 서버 저장이 성공한 후에 문항 넘기기
+        surveyResults.push(result);
+        currentSelection = null;  // 선택 초기화
+        document.getElementById('image-left').style.border = '';
+        document.getElementById('image-right').style.border = '';
+        
+        // 문항 카운트 증가
+        currentQuestion++;
+        updateQuestionCount();  // 문항 업데이트
+
+        // 30번째 문항에서 Save 버튼 표시
+        if (currentQuestion === totalQuestions) {
+            document.getElementById('save-btn').style.display = 'inline-block';  // Save 버튼 보이기
+            document.getElementById('next-btn').style.display = 'none';  // Next 버튼 숨기기
+        } else {
+            document.getElementById('save-btn').style.display = 'none';  // Save 버튼 숨기기
+            document.getElementById('next-btn').style.display = 'inline-block';  // Next 버튼 보이기
+            setTimeout(() => {
+                loadRandomImages();  // 다음 이미지 로드
+            }, 50);
+        }
     })
     .catch(error => console.error('Error saving result:', error));
-
-    console.log('Selection saved locally.');
-    currentSelection = null; // Reset selection
-    // 이미지 선택 테두리 초기화
-    document.getElementById('image-left').style.border = '';
-    document.getElementById('image-right').style.border = '';
-
-    // 문항 업데이트
-    currentQuestion++;
-    updateQuestionCount(); // 문항 업데이트
-
-    // 30번째 문항일 때 Save 버튼만 남기고 Next 버튼을 숨김
-    if (currentQuestion === totalQuestions) {
-        document.getElementById('save-btn').style.display = 'inline-block'; // Save 버튼 표시
-        document.getElementById('next-btn').style.display = 'none'; // Next 버튼 숨김 (추가된 부분)
-    } else {
-        document.getElementById('save-btn').style.display = 'none'; // 30번째 문항이 아닐 때는 숨김
-        document.getElementById('next-btn').style.display = 'inline-block'; // Next 버튼 표시
-        setTimeout(() => {
-            loadRandomImages();  // 다음 이미지를 로드
-        }, 50);
-    }
 }
 
 // 강제 종료 시 서버에 진행 중인 설문 데이터를 저장하는 함수 (추가된 부분)
