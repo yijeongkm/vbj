@@ -211,7 +211,7 @@ function saveSurvey() {
     })
     .then(data => {
         console.log('Survey results saved to server.');
-        alert('Survey results saved.');
+        alert('Survey results saved.\n설문조사에 시간을 할애해주셔서 감사드립니다.');
         setTimeout(() => {
             window.close(); // 설문 완료 후 창 닫기
         }, 300);
