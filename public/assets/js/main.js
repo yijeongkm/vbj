@@ -133,6 +133,7 @@ function nextSelection() {
 
         // **수정된 부분**: 문항이 30일 때 Save 버튼을 보여줌
         if (currentQuestion === totalQuestions) {
+            console.log("Displaying Save button");
             document.getElementById('save-btn').style.display = 'inline-block';
             document.getElementById('next-btn').style.display = 'none';
             console.log("30번째 문항 - Next 버튼 숨기고 Save 버튼 보이기");
