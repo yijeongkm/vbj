@@ -106,13 +106,12 @@ function nextSelection() {
 
     surveyResults.push(result);
 
-    // Next 버튼 클릭 시 서버에 자동으로 저장 (추가된 부분)
     fetch('/api/save', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(result)  // 각 결과를 서버에 저장
+        body: JSON.stringify(result)
     })
     .then(response => {
         if (!response.ok) {
@@ -123,26 +122,23 @@ function nextSelection() {
     .then(data => {
         console.log('Result saved to server:', data);
 
-        // 서버 저장이 성공한 후에 문항 넘기기
         surveyResults.push(result);
-        currentSelection = null;  // 선택 초기화
+        currentSelection = null;
         document.getElementById('image-left').style.border = '';
         document.getElementById('image-right').style.border = '';
         
         // 문항 카운트 증가
         currentQuestion++;
-        updateQuestionCount();  // 문항 업데이트
+        document.getElementById('question-count').textContent = `문항 ${currentQuestion}/${totalQuestions}`;
 
         // 30번째 문항에서 Save 버튼 표시
         if (currentQuestion === totalQuestions) {
-            document.getElementById('save-btn').style.display = 'inline-block';  // Save 버튼 보이기
-            document.getElementById('next-btn').style.display = 'none';  // Next 버튼 숨기기
+            document.getElementById('save-btn').style.display = 'inline-block';
+            document.getElementById('next-btn').style.display = 'none';
         } else {
-            document.getElementById('save-btn').style.display = 'none';  // Save 버튼 숨기기
-            document.getElementById('next-btn').style.display = 'inline-block';  // Next 버튼 보이기
             setTimeout(() => {
-                loadRandomImages();  // 다음 이미지 로드
-            }, 50);
+                loadRandomImages();
+            }, 300);
         }
     })
     .catch(error => console.error('Error saving result:', error));
