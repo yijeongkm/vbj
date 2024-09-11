@@ -75,6 +75,7 @@
         // 총 문항 수 및 현재 문항 추적 변수
         const totalQuestions = 30;
         let currentQuestion = 1;
+        let surveyResults = [];  // 전역 surveyResults 배열
 
         function checkForMobile() {
             // 모바일 기기 감지 로직
@@ -121,7 +122,6 @@
         }
 
         let currentSelection = null;
-        let surveyResults = [];
 
         function selectImage(selection) {
             currentSelection = selection;
@@ -157,7 +157,11 @@
                 selected: currentSelection,
                 leftImage: leftImage,
                 rightImage: rightImage
+                timestamp: new Date().toISOString()  // 시간 추가
             };
+            
+            // surveyResults 배열에 추가
+            surveyResults.push(result);
      
             fetch('/api/save', {
                 method: 'POST',
