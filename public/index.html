@@ -66,7 +66,10 @@
     <script>
         window.onload = function() {
             loadRandomImages();
-            checkForMobile();
+            checkForMobile(); // 모바일 반응형 체크
+            updateQuestionCount(); // 현재 문항 번호 업데이트 (추가된 부분)
+            window.addEventListener('resize', checkForMobile);
+            window.addEventListener('beforeunload', saveProgressBeforeExit); // 강제 종료 시 데이터 저장 (추가된 부분)
         };
 
         // 총 문항 수 및 현재 문항 추적 변수
@@ -81,6 +84,13 @@
             } else {
                 document.getElementById('leftButton').innerText = 'Left';
                 document.getElementById('rightButton').innerText = 'Right';
+            }
+        }
+
+        // 강제 종료 시 현재까지의 설문 데이터를 저장하는 함수 (추가된 부분)
+        function saveProgressBeforeExit(event) {
+            if (surveyResults.length > 0) {
+                saveProgressToServer();
             }
         }
 
@@ -124,6 +134,11 @@
                 document.getElementById('image-left').style.border = '';
             }
         }
+        
+        // 현재 문항 번호 업데이트 함수 (추가된 부분)
+        function updateQuestionCount() {
+            document.getElementById('question-count').textContent = `문항 ${currentQuestion}/${totalQuestions}`;
+        }
 
         function nextSelection() {
             if (currentSelection === null) {
@@ -145,26 +160,82 @@
             };
 
             surveyResults.push(result);
+            
+            fetch('/api/save', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(result)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.text();
+            })
+            .then(data => {
+                console.log('Result saved to server:', data);
 
             console.log('Selection saved locally.');
             currentSelection = null; // Reset selection
 
+            // 저장 완료 후 다음 작업 진행
+            surveyResults.push(result);
+            currentSelection = null;
             document.getElementById('image-left').style.border = '';
             document.getElementById('image-right').style.border = '';
+        
+            // 문항 카운트 증가
+            currentQuestion++;
+            document.getElementById('question-count').textContent = `문항 ${currentQuestion}/${totalQuestions}`;
+            console.log("Current Question: ", currentQuestion); // 현재 문항 번호 확인
 
-            // 다음 문항으로 넘어가기 전에 현재 문항 증가
-            if (currentQuestion < totalQuestions) {
-                currentQuestion++;
-                document.getElementById('question-count').textContent = `문항 ${currentQuestion}/${totalQuestions}`;
-                setTimeout(() => {
-                    loadRandomImages();
-                }, 300);
+            // **수정된 부분**: 문항이 30일 때 Save 버튼을 보여줌
+            if (currentQuestion === totalQuestions) {
+                console.log("Displaying Save button");
+                document.getElementById('save-btn').style.display = 'inline-block';
+                document.getElementById('next-btn').style.display = 'none';
+                console.log("30번째 문항 - Next 버튼 숨기고 Save 버튼 보이기");
             } else {
-                // 설문이 끝났을 때 처리
-                alert("설문이 완료되었습니다. 결과를 저장합니다.");
-                saveSurvey();
+                document.getElementById('next-btn').style.display = 'inline-block'; // Next 버튼을 다시 보임
+                document.getElementById('save-btn').style.display = 'none'; // Save 버튼 숨기기
+                setTimeout(() => {
+                    loadRandomImages();  // 다음 이미지를 로드
+                }, 300);
             }
+    })
+    .catch(error => console.error('Error saving result:', error));
+}
+
+    // 강제 종료 시 서버에 진행 중인 설문 데이터를 저장하는 함수 (추가된 부분)
+    function saveProgressToServer() {
+        if (surveyResults.length > 0) {
+            const progressData = {
+                results: surveyResults,
+                savedAt: new Date().toISOString()
+            };
+
+            fetch('/api/save', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(progressData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.text();
+            })
+            .then(data => {
+                console.log('Progress saved to server.');
+                surveyResults = []; // Reset survey results after saving
+            })
+            .catch(error => console.error('Error saving progress:', error));
         }
+    }
 
         function saveSurvey() {
             if (surveyResults.length === 0) {
@@ -192,7 +263,7 @@
             })
             .then(data => {
                 console.log('Survey results saved to server.');
-                alert('Survey results saved.');
+                alert('Survey results saved.\n설문조사에 시간을 할애해주셔서 감사드립니다.');
                 setTimeout(() => {
                     window.close();
                 }, 300);

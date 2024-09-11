@@ -104,6 +104,8 @@ function nextSelection() {
         rightImage: rightImage
     };
 
+    surveyResults.push(result);
+
     fetch('/api/save', {
         method: 'POST',
         headers: {
@@ -182,12 +184,6 @@ function saveSurvey() {
         alert('No survey results to save.');
         return;
     }
-
-    const lastResult = {
-        ...surveyResults[surveyResults.length - 1],  // 마지막 문항 결과
-        end: true  // 마지막 문항에 end 추가
-    };
-    surveyResults[surveyResults.length - 1] = lastResult;
 
     const finalResult = {
         results: surveyResults,
