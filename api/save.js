@@ -9,6 +9,11 @@ const S3 = new AWS.S3({
 export default async function handler(req, res) {
     const newResult = req.body; // 새로운 설문 결과 데이터
 
+    // 결과가 배열인지 확인
+    if (!Array.isArray(newResult.results)) {
+        return res.status(400).json({ error: 'Invalid data format: results should be an array' });
+    }
+
     const params = {
         Bucket: 'realsurvey', // S3 버킷 이름
         Key: 'survey-results0911.json', // 저장할 파일 이름
@@ -25,10 +30,21 @@ export default async function handler(req, res) {
             }
         });
 
-        const existingResults = JSON.parse(existingData.Body.toString('utf-8'));
+        let existingResults;
+        try {
+            existingResults = JSON.parse(existingData.Body.toString('utf-8'));
+        } catch (error) {
+            console.error('Error parsing existing data:', error);
+            return res.status(500).json({ error: 'Error parsing existing data' });
+        }
 
+        // 기존 데이터가 배열이 아닌 경우 빈 배열로 초기화
+        if (!Array.isArray(existingResults)) {
+            existingResults = [];
+        }
+        
         // 새로운 데이터를 기존 데이터에 추가
-        existingResults.push(...newResult.results);
+        existingResults = existingResults.concat(newResult.results);
 
         // 업데이트된 데이터를 다시 S3에 저장
         const updatedData = JSON.stringify(existingResults);
