@@ -20,23 +20,24 @@ export default async function handler(req, res) {
     };
 
     try {
-        // 기존 파일 읽기
+        // 기존 데이터를 불러와 파싱 후 새로운 데이터 추가
         const existingData = await S3.getObject(params).promise().catch(error => {
             if (error.code === 'NoSuchKey') {
-                // 파일이 존재하지 않으면 빈 배열로 시작
-                return { Body: JSON.stringify([]) };
+                return { Body: JSON.stringify([]) }; // 파일이 없을 경우 빈 배열
             } else {
                 throw error;
             }
         });
 
-        let existingResults;
-        try {
-            existingResults = JSON.parse(existingData.Body.toString('utf-8'));
-        } catch (error) {
-            console.error('Error parsing existing data:', error);
-            return res.status(500).json({ error: 'Error parsing existing data' });
-        }
+        let existingResults = JSON.parse(existingData.Body.toString('utf-8'));
+        existingResults.push(...newResult.results);
+
+        const updatedData = JSON.stringify(existingResults);
+        await S3.putObject({
+            ...params,
+            Body: updatedData,
+            ContentType: 'application/json',
+        }).promise();
 
         // 기존 데이터가 배열이 아닌 경우 빈 배열로 초기화
         if (!Array.isArray(existingResults)) {
@@ -45,14 +46,6 @@ export default async function handler(req, res) {
         
         // 새로운 데이터를 기존 데이터에 추가
         existingResults = existingResults.concat(newResult.results);
-
-        // 업데이트된 데이터를 다시 S3에 저장
-        const updatedData = JSON.stringify(existingResults);
-        await S3.putObject({
-            ...params,
-            Body: updatedData,
-            ContentType: 'application/json',
-        }).promise();
 
         res.status(200).json({ message: 'Result saved and appended' });
     } catch (error) {
