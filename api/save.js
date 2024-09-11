@@ -29,8 +29,16 @@ export default async function handler(req, res) {
             }
         });
 
-        let existingResults = JSON.parse(existingData.Body.toString('utf-8'));
-        existingResults.push(...newResult.results);
+        let existingResults;
+        try {
+            existingResults = JSON.parse(existingData.Body.toString('utf-8'));
+        } catch (error) {
+            console.error('Error parsing existing data:', error);
+            existingResults = []; // 데이터 파싱 오류 시 빈 배열로 초기화
+        }
+
+        // 새 데이터를 기존 데이터에 병합
+        existingResults = existingResults.concat(newResult.results);
 
         const updatedData = JSON.stringify(existingResults);
         await S3.putObject({
@@ -38,14 +46,6 @@ export default async function handler(req, res) {
             Body: updatedData,
             ContentType: 'application/json',
         }).promise();
-
-        // 기존 데이터가 배열이 아닌 경우 빈 배열로 초기화
-        if (!Array.isArray(existingResults)) {
-            existingResults = [];
-        }
-        
-        // 새로운 데이터를 기존 데이터에 추가
-        existingResults = existingResults.concat(newResult.results);
 
         res.status(200).json({ message: 'Result saved and appended' });
     } catch (error) {
