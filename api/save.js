@@ -11,7 +11,7 @@ export default async function handler(req, res) {
 
     const params = {
         Bucket: 'realsurvey', // S3 버킷 이름
-        Key: 'survey-results.json', // 저장할 파일 이름
+        Key: 'survey-results0911.json', // 저장할 파일 이름
     };
 
     try {
