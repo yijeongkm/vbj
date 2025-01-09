@@ -79,9 +79,21 @@ function selectImage(selection) {
     if (selection === 'left') {
         document.getElementById('image-left').style.border = '5px solid blue';
         document.getElementById('image-right').style.border = '';
+
+        // 모바일에서 선택된 이미지 스타일 추가
+        if (window.innerWidth <= 768) {
+            document.getElementById('image-left').classList.add('selected');
+            document.getElementById('image-right').classList.remove('selected');
+        }        
     } else if (selection === 'right') {
         document.getElementById('image-right').style.border = '5px solid blue';
         document.getElementById('image-left').style.border = '';
+
+        // 모바일에서 선택된 이미지 스타일 추가
+        if (window.innerWidth <= 768) {
+            document.getElementById('image-right').classList.add('selected');
+            document.getElementById('image-left').classList.remove('selected');
+        }        
     }
 }
 
