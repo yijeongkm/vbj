@@ -25,7 +25,7 @@ function shuffleArray(array) {
 async function loadFilesToDynamoDB() {
     const params = {
         Bucket: 'realsurvey',
-        Prefix: 'images/' // 이미지가 들어 있는 폴더 경로
+        Prefix: 'ksv/' // 이미지가 들어 있는 폴더 경로
     };
 
     try {

@@ -11,7 +11,7 @@
     <div class="container">
         <div class="header">
             <h1>쇠퇴경관 인식 설문조사</h1>
-            <p>두 경관이미지 중 어떤 경관이 더 쇠퇴했는지 선택해주세요.</p>
+            <p>두 경관 이미지 중 어떤 경관이 더 쇠퇴했는지 선택해주세요.</p>
             <!-- 현재 문항을 보여주기 위한 표시 -->
             <p id="question-count">문항 1/30</p>
         </div>
@@ -69,7 +69,7 @@
             checkForMobile(); // 모바일 반응형 체크
             updateQuestionCount(); // 현재 문항 번호 업데이트 (추가된 부분)
             window.addEventListener('resize', checkForMobile);
-            window.addEventListener('beforeunload', saveProgressBeforeExit); // 강제 종료 시 데이터 저장 (추가된 부분)
+            window.addEventListener('beforeunload', saveProgressBeforeExit); // 강제 종료 시 데이터 저장
         };
 
         // 총 문항 수 및 현재 문항 추적 변수
@@ -88,7 +88,7 @@
             }
         }
 
-        // 강제 종료 시 현재까지의 설문 데이터를 저장하는 함수 (추가된 부분)
+        // 강제 종료 시 현재까지의 설문 데이터를 저장하는 함수
         function saveProgressBeforeExit(event) {
             if (surveyResults.length > 0) {
                 saveProgressToServer();
@@ -135,7 +135,7 @@
             }
         }
         
-        // 현재 문항 번호 업데이트 함수 (추가된 부분)
+        // 현재 문항 번호 업데이트 함수
         function updateQuestionCount() {
             document.getElementById('question-count').textContent = `문항 ${currentQuestion}/${totalQuestions}`;
         }
@@ -200,7 +200,7 @@
     .catch(error => console.error('Error saving result:', error));
 }
 
-    // 강제 종료 시 서버에 진행 중인 설문 데이터를 저장하는 함수 (추가된 부분)
+    // 강제 종료 시 서버에 진행 중인 설문 데이터를 저장하는 함수
     function saveProgressToServer() {
         if (surveyResults.length > 0) {
             const progressData = {
@@ -265,7 +265,7 @@
 
         function downloadResults() {
             const password = prompt('Enter the admin password:');
-            if (password === '4532') {
+            if (password === '0507') {
                 window.location.href = '/api/results';
             } else {
                 alert('Incorrect password.');
