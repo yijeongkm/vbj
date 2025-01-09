@@ -20,34 +20,41 @@ export default async function handler(req, res) {
     };
 
     try {
-        // 기존 데이터를 불러와 파싱 후 새로운 데이터 추가
+        // 기존 데이터를 불러와 파싱
         const existingData = await S3.getObject(params).promise().catch(error => {
             if (error.code === 'NoSuchKey') {
-                return { Body: JSON.stringify([]) }; // 파일이 없을 경우 빈 배열
+                return { Body: JSON.stringify({ participants_count: 0, results: [] }) }; // 파일이 없을 경우 초기 데이터
             } else {
                 throw error;
             }
         });
 
-        let existingResults;
+        let parsedData;
         try {
-            existingResults = JSON.parse(existingData.Body.toString('utf-8'));
+            parsedData = JSON.parse(existingData.Body.toString('utf-8'));
         } catch (error) {
             console.error('Error parsing existing data:', error);
-            existingResults = []; // 데이터 파싱 오류 시 빈 배열로 초기화
+            parsedData = { participants_count: 0, results: [] }; // 데이터 파싱 오류 시 초기화
         }
 
-        // 새 데이터를 기존 데이터에 병합
-        existingResults = existingResults.concat(newResult.results);
+        // 참가자 수 증가
+        parsedData.participants_count = (parsedData.participants_count || 0) + 1;
 
-        const updatedData = JSON.stringify(existingResults);
+        // 새 데이터를 기존 데이터에 병합
+        parsedData.results = parsedData.results.concat(newResult.results);
+
+        // 업데이트된 데이터 저장
+        const updatedData = JSON.stringify(parsedData);
         await S3.putObject({
             ...params,
             Body: updatedData,
             ContentType: 'application/json',
         }).promise();
 
-        res.status(200).json({ message: 'Result saved and appended' });
+        res.status(200).json({ 
+            message: 'Result saved and appended', 
+            participants_count: parsedData.participants_count // 저장 후 참가자 수 반환
+        });
     } catch (error) {
         console.error('Error saving result:', error);
         res.status(500).json({ error: 'Error saving result' });
