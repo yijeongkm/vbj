@@ -222,3 +222,44 @@ function downloadResults() {
         alert('Incorrect password.');
     }
 }
+
+// 화면 크기에 따라 동작 업데이트
+function updateUIForScreenSize() {
+    if (window.innerWidth <= 768) {
+        // 모바일 환경: 버튼 숨기고 이미지를 클릭 가능하도록 설정
+        const buttons = document.querySelectorAll('.image-button-group button');
+        buttons.forEach(button => button.style.display = 'none');
+
+        const images = document.querySelectorAll('.image-container img');
+        images.forEach(image => {
+            image.style.cursor = 'pointer';
+            image.onclick = function () {
+                const selection = this.id === 'image-left' ? 'left' : 'right';
+                selectImage(selection); // 이미지 클릭 시 selectImage 호출
+            };
+        });
+    } else {
+        // 데스크톱 환경: 버튼 표시, 이미지 클릭 비활성화
+        const buttons = document.querySelectorAll('.image-button-group button');
+        buttons.forEach(button => button.style.display = 'inline-block');
+
+        const images = document.querySelectorAll('.image-container img');
+        images.forEach(image => {
+            image.style.cursor = 'default';
+            image.onclick = null; // 이미지 클릭 이벤트 제거
+        });
+    }
+}
+
+// 이미지 클릭 핸들러 (모바일 전용)
+function handleImageClick(selection) {
+    if (window.innerWidth <= 768) {
+        selectImage(selection); // 모바일 환경에서만 selectImage 호출
+    }
+}
+
+// 초기 실행
+updateUIForScreenSize();
+
+// 화면 크기 변경 시 이벤트 리스너 추가
+window.addEventListener('resize', updateUIForScreenSize);
