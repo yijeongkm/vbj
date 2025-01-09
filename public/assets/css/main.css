@@ -24,6 +24,18 @@ body {
     margin-bottom: 20px;
 }
 
+.header h1 {
+    font-size: 36px; /* 제목 글꼴 크기 */
+    font-weight: bold;
+    color: #333;
+}
+
+.question {
+    font-size: 20px; /* 질문 글꼴 크기 */
+    margin-bottom: 20px;
+    color: #555;
+}
+
 .user-info {
     margin-bottom: 20px;
     display: flex;
@@ -106,13 +118,13 @@ body {
     position: absolute;
     top: 10px;
     right: 10px;
-    background-color: #007bff;
+    background-color: #5c5c5c;
     border: none;
     color: white;
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 10px;
 }
 
 .admin-button:hover {
