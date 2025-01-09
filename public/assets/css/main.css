@@ -25,16 +25,18 @@ body {
 }
 
 .header h1 {
-    font-family: 'Noto Sans', Arial, sans-serif; /* 원하는 글꼴 추가 */
-    font-size: 34px; /* 글꼴 크기 */
+    font-family: 'Noto Sans', Arial, sans-serif;
+    letter-spacing: -3px;
+    font-size: 32px; /* 글꼴 크기 */
     font-weight: bold; /* 굵기 */
     color: #333;
     margin-bottom: 10px;
 }
 
 .header p:first-of-type {
-    font-family: 'Roboto', Arial, sans-serif; /* 원하는 글꼴 추가 */
-    font-size: 25px;
+    font-family: 'Roboto', Arial, sans-serif;
+    letter-spacing: -2px;
+    font-size: 22px;
     color: #555;
     margin-bottom: 20px;
 }
@@ -53,10 +55,10 @@ body {
 .user-info select {
     font-size: 12px;
     width: 100px;
-    height: 20px;
+    height: 25px;
     margin-right: 20px;
     border: 1px solid #ccc;
-    padding: 10px;
+    padding: 15px;
 }
 
 .images {
@@ -140,12 +142,22 @@ body {
 /* 미디어 쿼리를 사용하여 반응형 디자인 적용 */
 @media (max-width: 768px) {
     .images {
+        display: flex;
         flex-direction: column;
         align-items: center;
     }
 
     .image-button-group {
+        position: relative;
+        text-align: center
         margin-bottom: 20px;
+    }
+
+    .image-button-group button {
+        position: absolute; /* 이미지를 기준으로 버튼을 위치시킴 */
+        bottom: 10px; /* 이미지 하단에 버튼 배치 */
+        left: 50%; /* 가로 중앙 */
+        transform: translateX(-50%); /* 중앙 정렬 */
     }
 
     .image-container img {
@@ -153,9 +165,13 @@ body {
     }
 
     .buttons {
-        flex-direction: row;
-        justify-content: center;
-        gap: 20px;
+        display: flex;
+        justify-content: center; /* 가로 중앙 정렬 */
+        margin-top: 20px; /* 위 이미지와 간격 */
+    }
+
+    #next-btn {
+        margin: 0 auto; /* 가운데 정렬 */
     }
 }
 
