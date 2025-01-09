@@ -54,12 +54,15 @@ body {
 }
 
 .user-info select {
-    font-size: 5px;
+    font-size: 10px;
+    font-family: 'Roboto', Arial, sans-serif;
+    letter-spacing: -2px;
+    color: #000;
     width: 100px;
     height: 25px;
     margin-right: 20px;
     border: 1px solid #ccc;
-    padding: 15px;
+    padding: 5px;
 }
 
 .images {
@@ -161,7 +164,7 @@ body {
     .image-button-group button {
         position: absolute;
         top: 50%; /* 이미지 세로 중앙 */
-        right: -10%; /* 이미지 오른쪽 약간 바깥쪽 */
+        left: 100%; /* 이미지 오른쪽 가로 중앙 */
         transform: translateY(-50%); /* 세로 중앙 정렬 */
         background-color: #007bff;
         color: white;
@@ -199,16 +202,58 @@ body {
 }
 
 @media (max-width: 480px) {
-    .buttons button {
-        padding: 10px;
+    .images {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .image-button-group {
+        position: relative;
+        width: 100%;
+        text-align: center;
+    }
+
+    .image-container {
+        position: relative; /* 버튼의 위치 기준 */
+    }    
+
+    .image-button-group button {
+        position: absolute;
+        top: 50%; /* 이미지 세로 중앙 */
+        right: -10%; /* 이미지 오른쪽 약간 바깥쪽 */
+        transform: translateY(-50%); /* 세로 중앙 정렬 */
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
         font-size: 14px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     }
 
     .image-container img {
-        max-width: 80%;
+        max-width: 90%; /* 화면 크기에 맞게 이미지 크기 조정 */
+        height: auto;
+        display: block;
+        margin: 0 auto; /* 이미지 중앙 정렬 */
     }
 
-    .container {
-        padding: 20px;
+    .buttons {
+        display: flex;
+        justify-content: center; /* 가로 중앙 정렬 */
+        margin-top: 20px; /* 위 이미지와 간격 */
+    }
+
+    #next-btn {
+        margin: 0 auto; /* 중앙 정렬 */
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
     }
 }
