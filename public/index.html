@@ -5,23 +5,6 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <link rel="stylesheet" href="/assets/css/main.css" />
-    <style>
-        /* 반응형을 위한 기본 스타일 */
-        .buttons {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        @media (max-width: 1024px) {
-            .buttons {
-                display: none; /* 작은 화면에서는 버튼 숨김 */
-            }
-
-            .image-container img {
-                cursor: pointer; /* 이미지를 버튼처럼 보이도록 설정 */
-            }
-        }
-    </style>
 </head>
 <body>
 
@@ -49,27 +32,25 @@
             </select>
         </div>
 
-        <!-- 이미지와 버튼을 그룹화하여 배치 -->
         <div class="images">
-            <div class="image-button-group left-group">
-                <div class="image-container" id="image-left-container">
-                    <img src="" alt="Landscape 1" id="image-left" style="width: 700px; height: auto;" />
-                </div>
-                <div class="buttons">
-                    <button id="leftButton" onclick="selectImage('left')">Left</button>
-                </div>
+            <div class="image-container" id="image-left-container">
+                <img src="" alt="Landscape 1" id="image-left" style="width: 700px; height: auto;" />
+                <button id="leftButton" onclick="selectImage('left')">Left</button> <!-- 큰 화면에서만 동작 -->
             </div>
-            
-            <div class="image-button-group right-group">
-                <div class="image-container" id="image-right-container">
-                    <img src="" alt="Landscape 2" id="image-right" style="width: 700px; height: auto;" />
-                </div>
-                <div class="buttons">
-                    <button id="rightButton" onclick="selectImage('right')">Right</button>
-                    
-                </div>
+
+            <div class="image-container" id="image-right-container">
+                <img src="" alt="Landscape 2" id="image-right" style="width: 700px; height: auto;" />
+                <button id="rightButton" onclick="selectImage('right')">Right</button> <!-- 큰 화면에서만 동작 -->
             </div>
         </div>
+
+        <div class="footer">
+            <div class="buttons">
+                <button id="next-btn" onclick="nextSelection()">Next</button>
+                <button id="save-btn" style="display: none;" onclick="saveSurvey()">Save</button>
+            </div>
+        </div>
+
         <!-- Next와 Save 버튼은 아래에 배치 -->
         <div class="buttons">
             <button id="next-btn" onclick="nextSelection()">Next</button>
@@ -92,17 +73,7 @@
         const totalQuestions = 30;
         let currentQuestion = 1;
         let surveyResults = [];  // 전역 surveyResults 배열
-
-        function checkForMobile() {
-            // 모바일 기기 감지 로직
-            if (window.innerWidth <= 768) {
-                document.getElementById('leftButton').innerText = 'Up';
-                document.getElementById('rightButton').innerText = 'Down';
-            } else {
-                document.getElementById('leftButton').innerText = 'Left';
-                document.getElementById('rightButton').innerText = 'Right';
-            }
-        }
+        let currentSelection = null;
 
         // 강제 종료 시 현재까지의 설문 데이터를 저장하는 함수
         function saveProgressBeforeExit(event) {
@@ -110,9 +81,6 @@
                 saveProgressToServer();
             }
         }
-
-        // 반응형을 위한 리스너 추가
-        window.addEventListener('resize', checkForMobile);
 
         function loadRandomImages() {
             fetch('/api/images')
@@ -136,8 +104,6 @@
                 })
                 .catch(error => console.error('Error fetching images:', error));
         }
-
-        let currentSelection = null;
 
         function selectImage(selection) {
             currentSelection = selection;
@@ -173,7 +139,7 @@
         }
 
         function nextSelection() {
-            if (currentSelection === null) {
+            if (!currentSelection) {
                 alert('Please select an image before proceeding.');
                 return;
             }
