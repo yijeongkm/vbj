@@ -153,9 +153,7 @@ body {
     }
 
     .image-container img.selected {
-        border: 5px solid blue !important; /* 선택된 이미지에 파란색 테두리 */
-        box-shadow: 0 0 15px rgba(0, 0, 255, 0.5); /* 선택된 이미지를 강조 */
-        transition: border 0.2s ease, box-shadow 0.2s ease; /* 애니메이션 추가 */
+        border: 5px solid blue; /* 선택된 이미지에 파란색 테두리 */
     }
 
     .image-container img {
@@ -212,9 +210,7 @@ body {
     }
 
     .image-container img.selected {
-        border: 5px solid blue !important; /* 선택된 이미지에 파란색 테두리 */
-        box-shadow: 0 0 15px rgba(0, 0, 255, 0.5); /* 선택된 이미지를 강조 */
-        transition: border 0.2s ease, box-shadow 0.2s ease; /* 애니메이션 추가 */
+        border: 5px solid blue; /* 선택된 이미지에 파란색 테두리 */
     }
 
     .image-container img {
@@ -272,9 +268,7 @@ body {
     }
 
     .image-container img.selected {
-        border: 5px solid blue !important; /* 선택된 이미지에 파란색 테두리 */
-        box-shadow: 0 0 15px rgba(0, 0, 255, 0.5); /* 선택된 이미지를 강조 */
-        transition: border 0.2s ease, box-shadow 0.2s ease; /* 애니메이션 추가 */
+        border: 5px solid blue; /* 선택된 이미지에 파란색 테두리 */
     }
 
     .image-container img {
