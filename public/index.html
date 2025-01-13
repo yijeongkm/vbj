@@ -5,6 +5,23 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <link rel="stylesheet" href="/assets/css/main.css" />
+    <style>
+        /* 반응형을 위한 기본 스타일 */
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        @media (max-width: 1024px) {
+            .buttons {
+                display: none; /* 작은 화면에서는 버튼 숨김 */
+            }
+
+            .image-container img {
+                cursor: pointer; /* 이미지를 버튼처럼 보이도록 설정 */
+            }
+        }
+    </style>
 </head>
 <body>
 
@@ -67,7 +84,7 @@
             loadRandomImages();
             checkForMobile(); // 모바일 반응형 체크
             updateQuestionCount(); // 현재 문항 번호 업데이트 (추가된 부분)
-            window.addEventListener('resize', checkForMobile);
+            window.addEventListener('resize', handleResize); // 화면 크기 변경 시 업데이트
             window.addEventListener('beforeunload', saveProgressBeforeExit); // 강제 종료 시 데이터 저장
         };
 
@@ -122,25 +139,34 @@
 
         let currentSelection = null;
 
-        // 수정된 selectImage 함수
         function selectImage(selection) {
-            // 반응형 조건: 화면 너비가 768px 이하일 때만 동작
-            if (window.matchMedia("(max-width: 768px)").matches) {
-                currentSelection = selection;
+            currentSelection = selection;
 
-                // 선택된 이미지를 시각적으로 강조
-                if (selection === 'left') {
-                    document.getElementById('image-left').style.border = '5px solid blue';
-                    document.getElementById('image-right').style.border = '';
-                } else if (selection === 'right') {
-                    document.getElementById('image-right').style.border = '5px solid blue';
-                    document.getElementById('image-left').style.border = '';
-                }
-            } else {
-                console.log("Not in responsive mode, selection ignored.");
+            // 이미지가 변경된 것을 시각적으로 확인하기 위해 선택된 이미지의 테두리를 강조
+            if (selection === 'left') {
+                document.getElementById('image-left').style.border = '5px solid blue';
+                document.getElementById('image-right').style.border = '';
+            } else if (selection === 'right') {
+                document.getElementById('image-right').style.border = '5px solid blue';
+                document.getElementById('image-left').style.border = '';
             }
         }
+
+        // 작은 화면에서 이미지 클릭 시 동작 추가
+        function addImageClickListeners() {
+            document.getElementById('image-left').addEventListener('click', () => selectImage('left'));
+            document.getElementById('image-right').addEventListener('click', () => selectImage('right'));
+        }        
         
+        function handleResize() {
+            const isMobile = window.innerWidth <= 1024;
+
+            // 모바일에서만 이미지 클릭 리스너 추가
+            if (isMobile) {
+                addImageClickListeners();
+            }
+        }
+
         // 현재 문항 번호 업데이트 함수
         function updateQuestionCount() {
             document.getElementById('question-count').textContent = `문항 ${currentQuestion}/${totalQuestions}`;
