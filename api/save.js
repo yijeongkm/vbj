@@ -47,10 +47,13 @@ export default async function handler(req, res) {
         parsedData.participants_count = (parsedData.participants_count || 0) + 1;
 
         // 새 데이터를 기존 데이터에 병합
+        console.log('Before merge:', parsedData.results.length);
+        console.log('New data:', newResult.results.length);
         parsedData.results = parsedData.results.concat(newResult.results);
+        console.log('After merge:', parsedData.results.length);
 
         // 업데이트된 데이터 저장
-        const updatedData = JSON.stringify(parsedData);
+        const updatedData = JSON.stringify(parsedData, null, 2); // 보기 쉽게 저장
         await S3.putObject({
             ...params,
             Body: updatedData,
