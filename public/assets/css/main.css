@@ -206,7 +206,7 @@ body {
     }
 
     .image-container img {
-        max-width: 70%; /* 화면 너비에 맞게 조정 */
+        max-width: 100%; /* 화면 너비에 맞게 조정 */
         height: auto; /* 비율 유지 */
         cursor: pointer; /* 버튼처럼 커서 변경 */
         border-radius: 8px;

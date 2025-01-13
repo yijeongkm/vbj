@@ -4,7 +4,6 @@ window.onload = function() {
     updateQuestionCount(); // 현재 문항 번호 업데이트 (추가된 부분)
     initializeImageClickListeners(); // 이미지 클릭 이벤트 초기화
     window.addEventListener('resize', checkForMobile);
-    window.addEventListener('beforeunload', saveProgressBeforeExit); // 강제 종료 시 데이터 저장 (추가된 부분)
 };
 
 // 총 문항 수 및 현재 문항 추적 변수
@@ -97,6 +96,10 @@ function selectImage(selection) {
     }
 
     currentSelection = selection;
+
+    // 디버깅용 로그 출력
+    console.log(`Selected Image: ${selection}`);
+    
 }
 
 function clearSelection() {
