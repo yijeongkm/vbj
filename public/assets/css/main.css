@@ -75,63 +75,53 @@ body {
     flex-wrap: wrap; /* 화면 크기에 따라 이미지가 자동으로 줄바꿈되도록 */
 }
 
-
+/* 이미지 컨테이너와 버튼을 감싸는 새 컨테이너 추가 */
 .image-button-group {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 10px;
     flex: 1;
 }
 
+.image-container {
+    margin-bottom: 20px;
+}
+
 .image-container img {
-    max-width: 100%;
+    max-width: 500px; /* 이미지 최대 너비를 800px로 설정 */
     height: auto;
-    display: block;
-    margin: 0 auto;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.image-button-group button {
-    display: inline-block;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    margin-top: 10px;
+/* 왼쪽 이미지와 그 아래의 버튼들을 위한 스타일 */
+.left-group {
     text-align: center;
+    margin-right: 20px;
 }
 
-.image-button-group button:hover {
-    background-color: #0056b3;
+/* 오른쪽 이미지와 그 아래의 버튼들을 위한 스타일 */
+.right-group {
+    text-align: center;
+    margin-left: 20px;
 }
-
 
 .buttons {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    text-align: center;
-    z-index: 10;
     display: flex;
+    flex-direction: column;
+    align-items: center;
     gap: 10px;
 }
 
-
 .buttons button {
-    padding: 10px 20px;
-    font-size: 16px;
-    border-radius: 5px;
-    border: none;
     background-color: #007bff;
+    border: none;
     color: white;
+    padding: 10px 20px; /* 버튼의 크기 조절 */
+    border-radius: 5px;
     cursor: pointer;
+    font-size: 16px;
+    min-width: 100px;
 }
 
 .buttons button:hover {
@@ -157,7 +147,7 @@ body {
 
 
 /* 미디어 쿼리를 사용하여 반응형 디자인 적용 */
-@media (max-width: 1024px) {
+@media (max-width: 768px) {
     .image-button-group button {
         display: none;
     }

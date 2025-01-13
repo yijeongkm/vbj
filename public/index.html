@@ -32,23 +32,31 @@
             </select>
         </div>
 
+        <!-- 이미지와 버튼을 그룹화하여 배치 -->
         <div class="images">
-            <div class="image-container" id="image-left-container">
-                <img src="" alt="Landscape 1" id="image-left" style="width: 700px; height: auto;" />
-                <button id="leftButton" onclick="selectImage('left')">Left</button> <!-- 큰 화면에서만 동작 -->
+            <div class="image-button-group left-group">
+                <div class="image-container" id="image-left-container">
+                    <img src="" alt="Landscape 1" id="image-left" style="width: 700px; height: auto;" />
+                </div>
+                <div class="buttons">
+                    <button id="leftButton" onclick="selectImage('left')">Left</button>
+                </div>
             </div>
-
-            <div class="image-container" id="image-right-container">
-                <img src="" alt="Landscape 2" id="image-right" style="width: 700px; height: auto;" />
-                <button id="rightButton" onclick="selectImage('right')">Right</button> <!-- 큰 화면에서만 동작 -->
+            
+            <div class="image-button-group right-group">
+                <div class="image-container" id="image-right-container">
+                    <img src="" alt="Landscape 2" id="image-right" style="width: 700px; height: auto;" />
+                </div>
+                <div class="buttons">
+                    <button id="rightButton" onclick="selectImage('right')">Right</button>
+                    
+                </div>
             </div>
         </div>
-
-        <div class="footer">
-            <div class="buttons">
-                <button id="next-btn" onclick="nextSelection()">Next</button>
-                <button id="save-btn" style="display: none;" onclick="saveSurvey()">Save</button>
-            </div>
+        <!-- Next와 Save 버튼은 아래에 배치 -->
+        <div class="buttons">
+            <button id="next-btn" onclick="nextSelection()">Next</button>
+            <button id="save-btn" style="display: none;" onclick="saveSurvey()">Save</button>
         </div>
 
     <button class="admin-button" onclick="downloadResults()">Admin</button>
@@ -59,7 +67,7 @@
             loadRandomImages();
             checkForMobile(); // 모바일 반응형 체크
             updateQuestionCount(); // 현재 문항 번호 업데이트 (추가된 부분)
-            window.addEventListener('resize', handleResize); // 화면 크기 변경 시 업데이트
+            window.addEventListener('resize', checkForMobile);
             window.addEventListener('beforeunload', saveProgressBeforeExit); // 강제 종료 시 데이터 저장
         };
 
@@ -67,7 +75,17 @@
         const totalQuestions = 30;
         let currentQuestion = 1;
         let surveyResults = [];  // 전역 surveyResults 배열
-        let currentSelection = null;
+
+        function checkForMobile() {
+            // 모바일 기기 감지 로직
+            if (window.innerWidth <= 768) {
+                document.getElementById('leftButton').innerText = 'Up';
+                document.getElementById('rightButton').innerText = 'Down';
+            } else {
+                document.getElementById('leftButton').innerText = 'Left';
+                document.getElementById('rightButton').innerText = 'Right';
+            }
+        }
 
         // 강제 종료 시 현재까지의 설문 데이터를 저장하는 함수
         function saveProgressBeforeExit(event) {
@@ -75,6 +93,9 @@
                 saveProgressToServer();
             }
         }
+
+        // 반응형을 위한 리스너 추가
+        window.addEventListener('resize', checkForMobile);
 
         function loadRandomImages() {
             fetch('/api/images')
@@ -99,9 +120,10 @@
                 .catch(error => console.error('Error fetching images:', error));
         }
 
+        let currentSelection = null;
+
         function selectImage(selection) {
             currentSelection = selection;
-
             // 이미지가 변경된 것을 시각적으로 확인하기 위해 선택된 이미지의 테두리를 강조
             if (selection === 'left') {
                 document.getElementById('image-left').style.border = '5px solid blue';
@@ -111,29 +133,14 @@
                 document.getElementById('image-left').style.border = '';
             }
         }
-
-        // 작은 화면에서 이미지 클릭 시 동작 추가
-        function addImageClickListeners() {
-            document.getElementById('image-left').addEventListener('click', () => selectImage('left'));
-            document.getElementById('image-right').addEventListener('click', () => selectImage('right'));
-        }        
         
-        function handleResize() {
-            const isMobile = window.innerWidth <= 1024;
-
-            // 모바일에서만 이미지 클릭 리스너 추가
-            if (isMobile) {
-                addImageClickListeners();
-            }
-        }
-
         // 현재 문항 번호 업데이트 함수
         function updateQuestionCount() {
             document.getElementById('question-count').textContent = `문항 ${currentQuestion}/${totalQuestions}`;
         }
 
         function nextSelection() {
-            if (!currentSelection) {
+            if (currentSelection === null) {
                 alert('Please select an image before proceeding.');
                 return;
             }
