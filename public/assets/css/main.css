@@ -196,7 +196,7 @@ body {
 }
 
 /* 미디어 쿼리를 사용하여 반응형 디자인 적용 */
-@media (max-width: 1024px) {
+@media (max-width: 940px) {
     .image-button-group button {
         display: none;
     }
