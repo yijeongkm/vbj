@@ -70,7 +70,8 @@ body {
 
 .images {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    gap: 10px;
     margin-bottom: 20px;
     flex-wrap: wrap; /* 화면 크기에 따라 이미지가 자동으로 줄바꿈되도록 */
 }
