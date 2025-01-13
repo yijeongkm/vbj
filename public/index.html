@@ -122,15 +122,22 @@
 
         let currentSelection = null;
 
+        // 수정된 selectImage 함수
         function selectImage(selection) {
-            currentSelection = selection;
-            // 이미지가 변경된 것을 시각적으로 확인하기 위해 선택된 이미지의 테두리를 강조
-            if (selection === 'left') {
-                document.getElementById('image-left').style.border = '5px solid blue';
-                document.getElementById('image-right').style.border = '';
-            } else if (selection === 'right') {
-                document.getElementById('image-right').style.border = '5px solid blue';
-                document.getElementById('image-left').style.border = '';
+            // 반응형 조건: 화면 너비가 768px 이하일 때만 동작
+            if (window.matchMedia("(max-width: 768px)").matches) {
+                currentSelection = selection;
+
+                // 선택된 이미지를 시각적으로 강조
+                if (selection === 'left') {
+                    document.getElementById('image-left').style.border = '5px solid blue';
+                    document.getElementById('image-right').style.border = '';
+                } else if (selection === 'right') {
+                    document.getElementById('image-right').style.border = '5px solid blue';
+                    document.getElementById('image-left').style.border = '';
+                }
+            } else {
+                console.log("Not in responsive mode, selection ignored.");
             }
         }
         
