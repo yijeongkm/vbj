@@ -17,17 +17,6 @@ function saveProgressBeforeExit(event) {
     }
 }
 
-// 모바일 반응형 처리 함수
-function checkForMobile() {
-    if (window.innerWidth <= 768) {
-        document.getElementById('leftButton').innerText = 'Up';
-        document.getElementById('rightButton').innerText = 'Down';
-    } else {
-        document.getElementById('leftButton').innerText = 'Left';
-        document.getElementById('rightButton').innerText = 'Right';
-    }
-}
-
 // 현재 문항 번호 업데이트 함수 (추가된 부분)
 function updateQuestionCount() {
     document.getElementById('question-count').textContent = `문항 ${currentQuestion}/${totalQuestions}`;
@@ -69,6 +58,45 @@ function shuffleArray(array) {
     }
     return array;
 }
+
+// 이미지 클릭 이벤트 초기화 함수
+function initializeImageClickListeners() {
+    const leftImage = document.getElementById('image-left');
+    const rightImage = document.getElementById('image-right');
+
+    // 왼쪽 이미지를 클릭했을 때
+    leftImage.addEventListener('click', () => {
+        selectImage('left');
+    });
+
+    // 오른쪽 이미지를 클릭했을 때
+    rightImage.addEventListener('click', () => {
+        selectImage('right');
+    });
+}
+
+// 이미지 선택 함수
+function selectImage(selection) {
+    const leftImage = document.getElementById('image-left');
+    const rightImage = document.getElementById('image-right');
+
+    // 선택된 이미지에 파란색 테두리 추가
+    if (selection === 'left') {
+        leftImage.classList.add('selected');
+        rightImage.classList.remove('selected');
+    } else if (selection === 'right') {
+        rightImage.classList.add('selected');
+        leftImage.classList.remove('selected');
+    }
+
+    // 현재 선택된 이미지를 저장 (Next 버튼을 위해 사용 가능)
+    currentSelection = selection;
+}
+
+// 페이지 로드 시 초기화
+window.onload = function () {
+    initializeImageClickListeners(); // 이미지 클릭 이벤트 초기화
+};
 
 let currentSelection = null;
 let surveyResults = [];
