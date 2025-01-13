@@ -120,7 +120,7 @@ export default async function handler(req, res) {
         const selectedImages = await getRandomImagesFromDynamoDB();
 
         // CloudFront 배포 도메인 이름을 여기에 넣으세요.
-        const cloudFrontDomain = 'd2icbqhqqbhym1.cloudfront.net'; // CloudFront 도메인
+        const cloudFrontDomain = 'do08wsw7fgwrh.cloudfront.net'; // CloudFront 도메인
 
         const imageUrls = selectedImages.map(image => `https://${cloudFrontDomain}/${image}`);
 
