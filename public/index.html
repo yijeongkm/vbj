@@ -72,15 +72,32 @@
         let surveyResults = [];  // 전역 surveyResults 배열
 
         function checkForMobile() {
-            // 모바일 기기 감지 로직
-            if (window.innerWidth <= 1500) {
-                document.getElementById('leftButton').innerText = 'Up';
-                document.getElementById('rightButton').innerText = 'Down';
-            } else {
-                document.getElementById('leftButton').innerText = 'Left';
-                document.getElementById('rightButton').innerText = 'Right';
-            }
+        const leftButton = document.getElementById('leftButton');
+        const rightButton = document.getElementById('rightButton');
+        const isMobile = window.innerWidth <= 1024; // 모바일 기기 기준 (768px 이하)
+
+        if (isMobile) {
+            // 모바일 환경: 버튼 숨기기
+            leftButton.style.display = 'none';
+            rightButton.style.display = 'none';
+    
+            // 이미지를 클릭하여 선택하도록 설정
+            console.log('Mobile mode: Buttons hidden, images are clickable.');
+        } else {
+            // 데스크톱 환경: 버튼 표시
+            leftButton.style.display = 'inline-block';
+            rightButton.style.display = 'inline-block';
+    
+            // 버튼 텍스트 업데이트
+            leftButton.innerText = 'Left';
+            rightButton.innerText = 'Right';
+    
+            console.log('Desktop mode: Buttons visible.');
         }
+    }
+    
+    // 반응형을 위한 이벤트 리스너 추가
+    window.addEventListener('resize', checkForMobile);
 
         // 강제 종료 시 현재까지의 설문 데이터를 저장하는 함수
         function saveProgressBeforeExit(event) {
