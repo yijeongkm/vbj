@@ -23,13 +23,19 @@ export default async function handler(req, res) {
         // 기존 데이터를 불러와 파싱
         const existingData = await S3.getObject(params).promise().catch(error => {
             if (error.code === 'NoSuchKey') {
+                console.log('Initializing new file.');
                 return { Body: JSON.stringify({ participants_count: 0, results: [] }) }; // 파일이 없을 경우 초기 데이터
             } else {
                 throw error;
             }
         });
 
-        let parsedData;
+        let parsedData = JSON.parse(existingData.Body.toString('utf-8')) || { participants_count: 0, results: [] };
+
+        if (newResult.requestId && parsedData.results.some(r => r.requestId === newResult.requestId)) {
+            return res.status(400).json({ error: 'Duplicate request detected' });
+        }
+
         try {
             parsedData = JSON.parse(existingData.Body.toString('utf-8'));
         } catch (error) {
