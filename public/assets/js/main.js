@@ -33,6 +33,22 @@ async function loadRandomImages() {
     }
 }
 
+function checkForMobile() {
+    const isMobile = window.innerWidth <= 1024;
+    const leftButton = document.getElementById('leftButton');
+    const rightButton = document.getElementById('rightButton');
+
+    if (isMobile) {
+        // 모바일 환경에서는 버튼을 숨기고 이미지를 클릭하도록 설정
+        leftButton.style.display = 'none';
+        rightButton.style.display = 'none';
+    } else {
+        // 큰 화면에서는 버튼을 다시 표시
+        leftButton.style.display = 'inline-block';
+        rightButton.style.display = 'inline-block';
+    }
+}
+
 function preloadImage(url) {
     return new Promise((resolve, reject) => {
         const img = new Image();
@@ -79,6 +95,11 @@ function selectImage(selection) {
     }
 
     currentSelection = selection;
+}
+
+function clearSelection() {
+    document.getElementById('image-left').classList.remove('selected');
+    document.getElementById('image-right').classList.remove('selected');
 }
 
 function updateQuestionCount() {

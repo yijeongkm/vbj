@@ -76,11 +76,49 @@ body {
 }
 
 /* 이미지 컨테이너와 버튼을 감싸는 새 컨테이너 추가 */
+
+/* 공통 이미지 스타일 */
+.selectable {
+    max-width: 500px;
+    height: auto;
+    cursor: pointer;
+    display: block;
+    margin: 0 auto;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    transition: border 0.2s ease;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 선택된 이미지 스타일 */
+.selectable.selected {
+    border: 5px solid blue;
+    box-shadow: 0 0 15px rgba(0, 0, 255, 0.5);
+}
+
+/* 버튼 스타일 */
+.selection-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+    display: block; /* 기본적으로 버튼은 항상 표시 */
+}
+
+.selection-button:hover {
+    background-color: #0056b3;
+}
+
+/* 이미지와 버튼을 그룹화 */
 .image-button-group {
     display: flex;
     flex-direction: column;
     align-items: center;
-    flex: 1;
+    margin-bottom: 20px;
 }
 
 .image-container {
