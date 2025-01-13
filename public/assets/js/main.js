@@ -72,10 +72,12 @@ function initializeImageClickListeners() {
     const leftImage = document.getElementById('image-left');
     const rightImage = document.getElementById('image-right');
 
+    // 왼쪽 이미지 클릭 이벤트
     leftImage.addEventListener('click', () => {
         selectImage('left');
     });
 
+    // 오른쪽 이미지 클릭 이벤트
     rightImage.addEventListener('click', () => {
         selectImage('right');
     });

@@ -195,7 +195,6 @@ body {
     background-color: #0056b3;
 }
 
-
 /* 미디어 쿼리를 사용하여 반응형 디자인 적용 */
 @media (max-width: 1024px) {
     .image-button-group button {
@@ -207,7 +206,7 @@ body {
     }
 
     .image-container img {
-        max-width: 50%; /* 화면 너비에 맞게 조정 */
+        max-width: 70%; /* 화면 너비에 맞게 조정 */
         height: auto; /* 비율 유지 */
         cursor: pointer; /* 버튼처럼 커서 변경 */
         border-radius: 8px;
