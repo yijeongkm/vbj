@@ -147,6 +147,63 @@ body {
 
 
 /* 미디어 쿼리를 사용하여 반응형 디자인 적용 */
+@media (max-width: 1024px) {
+    .image-button-group button {
+        display: none;
+    }
+
+    .image-container img.selected {
+        border: 5px solid blue; /* 선택된 이미지에 파란색 테두리 */
+    }
+
+    .image-container img {
+        max-width: 100%; /* 화면 너비에 맞게 조정 */
+        height: auto; /* 비율 유지 */
+        cursor: pointer; /* 버튼처럼 커서 변경 */
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        border: 2px solid transparent; /* 기본적으로 투명한 테두리 */
+        transition: border 0.2s ease;
+        display: block;
+        margin: 0 auto; /* 중앙 정렬 */
+    }
+
+    .image-container {
+        margin-bottom: 20px; /* 이미지 사이 간격 */
+    }
+
+    .image-container img:active {
+        transform: scale(0.95); /* 클릭 시 살짝 축소 */
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); /* 클릭 시 그림자 축소 */
+    }
+
+    /* Next 버튼 스타일 유지 */
+    .buttons {
+        position: fixed; /* 화면 하단에 고정 */
+        bottom: 20px;
+        left: 0;
+        right: 0;
+        text-align: center;
+    }
+        
+    #next-btn {
+        display: inline-block;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        text-align: center;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Next 버튼 그림자 */
+    }
+
+    #next-btn:hover {
+        background-color: #0056b3; /* Next 버튼 호버 효과 */
+    }
+}
+
 @media (max-width: 768px) {
     .image-button-group button {
         display: none;
