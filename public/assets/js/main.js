@@ -2,6 +2,7 @@ window.onload = function() {
     loadRandomImages();
     checkForMobile(); // 모바일 반응형 체크
     updateQuestionCount(); // 현재 문항 번호 업데이트 (추가된 부분)
+    initializeImageClickListeners(); // 이미지 클릭 이벤트 초기화
     window.addEventListener('resize', checkForMobile);
     window.addEventListener('beforeunload', saveProgressBeforeExit); // 강제 종료 시 데이터 저장 (추가된 부분)
 };
@@ -9,18 +10,8 @@ window.onload = function() {
 // 총 문항 수 및 현재 문항 추적 변수
 const totalQuestions = 30;
 let currentQuestion = 1;
-
-// 강제 종료 시 현재까지의 설문 데이터를 저장하는 함수 (추가된 부분)
-function saveProgressBeforeExit(event) {
-    if (surveyResults.length > 0) {
-        saveProgressToServer();
-    }
-}
-
-// 현재 문항 번호 업데이트 함수 (추가된 부분)
-function updateQuestionCount() {
-    document.getElementById('question-count').textContent = `문항 ${currentQuestion}/${totalQuestions}`;
-}
+let currentSelection = null;
+let surveyResults = [];
 
 async function loadRandomImages() {
     try {
@@ -32,10 +23,11 @@ async function loadRandomImages() {
 
         if (images.length < 2) throw new Error('Not enough images to display');
 
-        // 미리 이미지 로드
         await Promise.all([preloadImage(images[0]), preloadImage(images[1])]);
         document.getElementById('image-left').src = images[0];
         document.getElementById('image-right').src = images[1];
+        currentSelection = null; // 선택 상태 초기화
+
     } catch (error) {
         console.error('Error fetching images:', error);
     }
@@ -64,12 +56,10 @@ function initializeImageClickListeners() {
     const leftImage = document.getElementById('image-left');
     const rightImage = document.getElementById('image-right');
 
-    // 왼쪽 이미지를 클릭했을 때
     leftImage.addEventListener('click', () => {
         selectImage('left');
     });
 
-    // 오른쪽 이미지를 클릭했을 때
     rightImage.addEventListener('click', () => {
         selectImage('right');
     });
@@ -80,7 +70,6 @@ function selectImage(selection) {
     const leftImage = document.getElementById('image-left');
     const rightImage = document.getElementById('image-right');
 
-    // 선택된 이미지에 파란색 테두리 추가
     if (selection === 'left') {
         leftImage.classList.add('selected');
         rightImage.classList.remove('selected');
@@ -89,40 +78,21 @@ function selectImage(selection) {
         leftImage.classList.remove('selected');
     }
 
-    // 현재 선택된 이미지를 저장 (Next 버튼을 위해 사용 가능)
     currentSelection = selection;
 }
 
-// 페이지 로드 시 초기화
-window.onload = function () {
-    initializeImageClickListeners(); // 이미지 클릭 이벤트 초기화
-};
+function updateQuestionCount() {
+    document.getElementById('question-count').textContent = `문항 ${currentQuestion}/${totalQuestions}`;
+}
 
-let currentSelection = null;
-let surveyResults = [];
-
-function selectImage(selection) {
-    currentSelection = selection;
-    // 이미지가 변경된 것을 시각적으로 확인하기 위해 선택된 이미지의 테두리를 강조
-    if (selection === 'left') {
-        document.getElementById('image-left').style.border = '5px solid blue';
-        document.getElementById('image-right').style.border = '';
-
-        // 모바일에서 선택된 이미지 스타일 추가
-        if (window.innerWidth <= 768) {
-            document.getElementById('image-left').classList.add('selected');
-            document.getElementById('image-right').classList.remove('selected');
-        }        
-    } else if (selection === 'right') {
-        document.getElementById('image-right').style.border = '5px solid blue';
-        document.getElementById('image-left').style.border = '';
-
-        // 모바일에서 선택된 이미지 스타일 추가
-        if (window.innerWidth <= 768) {
-            document.getElementById('image-right').classList.add('selected');
-            document.getElementById('image-left').classList.remove('selected');
-        }        
+function saveProgressBeforeExit(event) {
+    if (surveyResults.length > 0) {
+        navigator.sendBeacon('/api/save', JSON.stringify({
+            results: surveyResults,
+            savedAt: new Date().toISOString()
+        }));
     }
+    event.returnValue = 'Are you sure you want to leave?';
 }
 
 function nextSelection() {
@@ -163,7 +133,6 @@ function nextSelection() {
         console.log('Result saved to server:', data);
 
         // 저장 완료 후 다음 작업 진행
-        surveyResults.push(result);
         currentSelection = null;
         document.getElementById('image-left').style.border = '';
         document.getElementById('image-right').style.border = '';
@@ -256,7 +225,7 @@ function saveSurvey() {
 
 function downloadResults() {
     const password = prompt('Enter the admin password:');
-    if (password === '4532') {
+    if (password === '0507') {
         window.location.href = '/api/results';
     } else {
         alert('Incorrect password.');
