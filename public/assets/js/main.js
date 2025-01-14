@@ -37,10 +37,13 @@ function checkForMobile() {
     const leftButton = document.getElementById('leftButton');
     const rightButton = document.getElementById('rightButton');
 
+    console.log('isMobile:', isMobile);
+
     if (isMobile) {
         // 모바일 환경에서는 버튼을 숨기고 이미지를 클릭하도록 설정
         leftButton.style.display = 'none';
         rightButton.style.display = 'none';
+        console.log('Initializing image click listeners for mobile...');
         initializeImageClickListeners(); // 모바일 환경에서 이미지 클릭 이벤트 설정
     } else {
         // 큰 화면에서는 버튼을 다시 표시
@@ -71,7 +74,7 @@ function shuffleArray(array) {
 function initializeImageClickListeners() {
     const leftImage = document.getElementById('image-left');
     const rightImage = document.getElementById('image-right');
-
+    
     // 왼쪽 이미지 클릭 이벤트
     leftImage.addEventListener('click', () => {
         selectImage('left');
