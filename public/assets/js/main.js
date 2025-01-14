@@ -77,17 +77,20 @@ function initializeImageClickListeners() {
     
     // 왼쪽 이미지 클릭 이벤트
     leftImage.addEventListener('click', () => {
+        console.log('Left image clicked');
         selectImage('left');
     });
 
     // 오른쪽 이미지 클릭 이벤트
     rightImage.addEventListener('click', () => {
+        console.log('Right image clicked');
         selectImage('right');
     });
 }
 
 // 이미지 선택 함수
 function selectImage(selection) {
+    console.log(`selectImage called with selection: ${selection}`);
     const leftImage = document.getElementById('image-left');
     const rightImage = document.getElementById('image-right');
 
