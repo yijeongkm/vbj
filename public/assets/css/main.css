@@ -197,6 +197,15 @@ body {
 
 /* 미디어 쿼리를 사용하여 반응형 디자인 적용 */
 @media (max-width: 1024px) {
+    .images {
+        flex-wrap: nowrap; /* 가로 정렬 유지 */
+        justify-content: space-evenly; /* 이미지 간 동일한 간격 */
+    }
+
+    .image-container {
+        flex: 1; /* 이미지 크기를 균등 분배 */
+    }
+
     .image-button-group button {
         display: none;
     }
@@ -228,11 +237,13 @@ body {
 
     /* Next 버튼 스타일 유지 */
     .buttons {
-        position: fixed; /* 화면 하단에 고정 */
+        position: flex; /* 화면 하단에 고정 */
         bottom: 20px;
         left: 0;
         right: 0;
         text-align: center;
+        justify-content: center;
+        margin-top: 20px;
     }
         
     #next-btn {
@@ -243,7 +254,7 @@ body {
         padding: 10px 20px;
         border-radius: 5px;
         cursor: pointer;
-        font-size: 10px;
+        font-size: 16px;
         text-align: center;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Next 버튼 그림자 */
     }
@@ -288,11 +299,13 @@ body {
 
     /* Next 버튼 스타일 유지 */
     .buttons {
-        position: fixed; /* 화면 하단에 고정 */
+        position: flex; /* 화면 하단에 고정 */
         bottom: 20px;
         left: 0;
         right: 0;
         text-align: center;
+        justify-content: center;
+        margin-top: 20px;
     }
         
     #next-btn {
@@ -303,7 +316,7 @@ body {
         padding: 5px 10px;
         border-radius: 5px;
         cursor: pointer;
-        font-size: 8px;
+        font-size: 14px;
         text-align: center;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Next 버튼 그림자 */
     }
@@ -346,11 +359,13 @@ body {
 
     /* Next 버튼 스타일 유지 */
     .buttons {
-        position: fixed; /* 화면 하단에 고정 */
+        position: flex; /* 화면 하단에 고정 */
         bottom: 20px;
         left: 0;
         right: 0;
         text-align: center;
+        justify-content: center;
+        margin-top: 20px;
     }
         
     #next-btn {
@@ -361,7 +376,7 @@ body {
         padding: 5px 10px;
         border-radius: 5px;
         cursor: pointer;
-        font-size: 8px;
+        font-size: 10px;
         text-align: center;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Next 버튼 그림자 */
     }
