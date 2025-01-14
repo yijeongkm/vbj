@@ -38,9 +38,17 @@ export default async function handler(req, res) {
             parsedData = { participants_count: 0, results: [] }; // 데이터 파싱 오류 시 초기화
         }
 
+        // 중복 요청 확인
+        if (
+            newResult.requestId && 
+            parsedData.results.some(r => r.requestId === newResult.requestId)
+        ) {
+            return res.status(400).json({ error: 'Duplicate request detected' });
+        }
+
         // 새로운 설문조사를 시작하며 참가자 번호를 부여
-        parsedData.participants_count = parsedData.participants_count || 0;
-        const participantId = parsedData.participants_count;
+        // parsedData.participants_count = parsedData.participants_count || 0;
+        const participantId = parsedData.participants_count + 1;
 
         // 새로운 설문 결과에 고유 번호를 추가
         const resultsWithId = newResult.results.map((result, index) => ({
