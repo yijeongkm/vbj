@@ -1,4 +1,5 @@
-window.onload = function() {
+window.onload = async function() {
+    await initializeParticipantId(); // ID 초기화
     loadRandomImages();
     checkForMobile(); // 모바일 반응형 체크
     updateQuestionCount(); // 현재 문항 번호 업데이트 (추가된 부분)
@@ -11,6 +12,19 @@ const totalQuestions = 30;
 let currentQuestion = 1;
 let currentSelection = null;
 let surveyResults = [];
+let surveyParticipantId = localStorage.getItem('participantId'); // 로컬 스토리지에서 가져오기
+
+if (!surveyParticipantId) {
+    fetch('/api/save', { method: 'POST', headers: { 'Content-Type': 'application/json' } })
+        .then(response => response.json())
+        .then(data => {
+            if (data.participantId) {
+                surveyParticipantId = data.participantId; // 서버에서 받은 ID 저장
+                localStorage.setItem('participantId', surveyParticipantId); // 로컬 스토리지에 저장
+            }
+        })
+        .catch(error => console.error('Error fetching participantId:', error));
+}
 
 async function loadRandomImages() {
     try {
@@ -140,6 +154,7 @@ function nextSelection() {
     const rightImage = document.getElementById('image-right').src;
 
     const result = {
+        participantId: surveyParticipantId,
         gender: gender,
         age: age,
         selected: currentSelection,
@@ -151,19 +166,23 @@ function nextSelection() {
 
     fetch('/api/save', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(result)
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ participantId: surveyParticipantId, results: [result] })
     })
     .then(response => {
         if (!response.ok) {
             throw new Error('Network response was not ok ' + response.statusText);
         }
-        return response.text();
+        return response.json();
     })
     .then(data => {
         console.log('Result saved to server:', data);
+
+        // 서버에서 participantId를 반환받으면 저장
+        if (!surveyParticipantId && data.participantId) {
+            surveyParticipantId = data.participantId;
+            localStorage.setItem('participantId', surveyParticipantId);
+        }
 
         // 저장 완료 후 다음 작업 진행
         currentSelection = null;
@@ -177,16 +196,24 @@ function nextSelection() {
 
         // **수정된 부분**: 문항이 30일 때 Save 버튼을 보여줌
         if (currentQuestion === totalQuestions) {
+
             console.log("Displaying Save button");
+            
             document.getElementById('save-btn').style.display = 'inline-block';
             document.getElementById('next-btn').style.display = 'none';
+            
             console.log("30번째 문항 - Next 버튼 숨기고 Save 버튼 보이기");
+
+            // 마지막 문항에서도 이미지를 새로 호출
+            setTimeout(() => {
+                loadRandomImages();
+            }, 300);
         } else {
             document.getElementById('next-btn').style.display = 'inline-block'; // Next 버튼을 다시 보임
             document.getElementById('save-btn').style.display = 'none'; // Save 버튼 숨기기
-            setTimeout(() => {
-                loadRandomImages();  // 다음 이미지를 로드
-            }, 300);
+        setTimeout(() => {
+            loadRandomImages();  // 다음 이미지를 로드
+        }, 300);
         }
     })
     .catch(error => console.error('Error saving result:', error));
@@ -227,33 +254,25 @@ function saveSurvey() {
         return;
     }
 
-    const finalResult = {
-        results: surveyResults,
-        savedAt: new Date().toISOString()
-    };
-    
     // 서버에 마지막 결과와 end만 저장
     fetch('/api/save', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(finalResult)  // 마지막 문항과 end를 포함한 전체 결과 저장
+        body: JSON.stringify({ results: surveyResults, savedAt: new Date().toISOString() })  // 마지막 문항과 end를 포함한 전체 결과 저장
     })
     .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok ' + response.statusText);
-        }
-        return response.text();
+        if (!response.ok) throw new Error('결과 저장 중 에러 발생');
     })
     .then(data => {
-        console.log('Survey results saved to server.');
-        alert('Survey results saved.\n설문조사에 시간을 할애해주셔서 감사드립니다.');
+        console.log('설문 결과가 성공적으로 저장되었습니다.');
+        alert('설문조사가 저장되었습니다.\n참여해주셔서 감사드립니다.');
         setTimeout(() => {
             window.close(); // 설문 완료 후 창 닫기
-        }, 300);
+        }, 200);
     })
-    .catch(error => console.error('Error saving survey results:', error));
+    .catch(error => console.error('설문 저장 중 에러:', error));
 }
 
 function downloadResults() {

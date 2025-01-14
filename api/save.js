@@ -6,6 +6,8 @@ const S3 = new AWS.S3({
     region: 'ap-northeast-2', // S3 버킷이 위치한 리전
 });
 
+const INITIAL_DATA = { participants_count: 0, results: [] };
+
 export default async function handler(req, res) {
     const newResult = req.body; // 새로운 설문 결과 데이터
 
@@ -24,7 +26,7 @@ export default async function handler(req, res) {
         const existingData = await S3.getObject(params).promise().catch(error => {
             if (error.code === 'NoSuchKey') {
                 console.log('Initializing new file.');
-                return { Body: JSON.stringify({ participants_count: 0, results: [] }) }; // 파일이 없을 경우 초기 데이터
+                return { Body: JSON.stringify(INITIAL_DATA) }; // 파일이 없을 경우 초기 데이터
             } else {
                 throw error;
             }
@@ -35,32 +37,31 @@ export default async function handler(req, res) {
             parsedData = JSON.parse(existingData.Body.toString('utf-8'));
         } catch (error) {
             console.error('Error parsing existing data:', error);
-            parsedData = { participants_count: 0, results: [] }; // 데이터 파싱 오류 시 초기화
+            return res.status(500).json({ error: 'Failed to parse existing data' });
         }
 
-        // 새로운 설문조사를 시작하며 참가자 번호를 한 번만 증가
+        // 참가자 ID 생성
         if (!newResult.participantId) {
-            parsedData.participants_count = parsedData.participants_count || 0;
-            newResult.participantId = parsedData.participants_count + 1;
-            parsedData.participants_count = newResult.participantId; // 참가자 수 증가
+            newResult.participantId = parsedData.participants_count + 1; // 임시 ID
         }
 
-        // 새로운 설문 결과에 고유 번호를 추가
+        const participantId = newResult.participantId;
+
+        // responseId  추가
         const resultsWithId = newResult.results.map((result, index) => ({
             ...result,
-            participantId: newResult.participantId, // 동일한 참가자 고유 번호
-            responseId: `${newResult.participantId}-${index + 1}`, // 응답 고유 번호 (옵션)
+            participantId, // 참가자 고유 ID
+            responseId: `${participantId}-${index + 1}`,
         }));
 
-        // 중복 데이터 확인
+        // 새 데이터를 기존 데이터에 병합
         const existingIds = new Set(parsedData.results.map(r => r.responseId));
         const uniqueResults = resultsWithId.filter(result => !existingIds.has(result.responseId));
 
         if (uniqueResults.length === 0) {
-            return res.status(400).json({ error: 'Duplicate results detected, no new data saved.' });
+            return res.status(409).json({ error: 'Duplicate results detected, no new data saved.' });
         }
 
-        // 새 데이터를 기존 데이터에 병합
         parsedData.results = [...parsedData.results, ...uniqueResults];
 
         // 업데이트된 데이터 저장
@@ -71,13 +72,16 @@ export default async function handler(req, res) {
             ContentType: 'application/json',
         }).promise();
 
+        // 저장 성공 후에만 participants_count 증가
+        parsedData.participants_count += 1;
+
         res.status(200).json({ 
             message: 'Result saved and appended', 
             participants_count: parsedData.participants_count,
-            participantId: newResult.participantId, // 저장 후 참가자 수 반환
+            participantId, // 저장 후 참가자 수 반환
         });
     } catch (error) {
         console.error('Error saving result:', error);
         res.status(500).json({ error: 'Error saving result' });
     }
-}
+    }
