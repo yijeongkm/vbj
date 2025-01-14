@@ -178,11 +178,11 @@ function nextSelection() {
     .then(data => {
         console.log('Result saved to server:', data);
 
-        // 서버에서 participantId를 반환받으면 저장
-        if (!surveyParticipantId && data.participantId) {
-            surveyParticipantId = data.participantId;
-            localStorage.setItem('participantId', surveyParticipantId);
-        }
+        // // 서버에서 participantId를 반환받으면 저장
+        // if (!surveyParticipantId && data.participantId) {
+        //     surveyParticipantId = data.participantId;
+        //     localStorage.setItem('participantId', surveyParticipantId);
+        // }
 
         // 저장 완료 후 다음 작업 진행
         currentSelection = null;
