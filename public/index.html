@@ -191,26 +191,26 @@
             .then(data => {
                 console.log('Result saved to server:', data);
 
-            // 다음 작업 진행
-            currentSelection = null;
-            document.getElementById('image-left').style.border = '';
-            document.getElementById('image-right').style.border = '';
-        
             // 문항 카운트 증가
             currentQuestion++;
-            document.getElementById('question-count').textContent = `문항 ${currentQuestion}/${totalQuestions}`;
+            updateQuestionCount();
 
             if (currentQuestion === totalQuestions) {
-            document.getElementById('save-btn').style.display = 'inline-block';
-            document.getElementById('next-btn').style.display = 'none';
-        } else {
-            setTimeout(() => {
-                loadRandomImages();  // 다음 이미지를 로드
-            }, 300);
-        }
-    })
-    .catch(error => console.error('Error saving result:', error));
-}
+                document.getElementById('save-btn').style.display = 'inline-block';
+                document.getElementById('next-btn').style.display = 'none';
+            } else {
+                currentSelection = null;
+                document.getElementById('image-left').style.border = '';
+                document.getElementById('image-right').style.border = '';
+
+                // 다음 이미지를 로드하기 전에 화면을 잠시 비웁니다.
+                setTimeout(() => {
+                    loadRandomImages();
+                }, 300);
+            }
+        })
+        .catch(error => console.error('Error saving result:', error));
+    }
 
     // 강제 종료 시 서버에 진행 중인 설문 데이터를 저장하는 함수
     function saveProgressToServer() {
