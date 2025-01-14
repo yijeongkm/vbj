@@ -41,6 +41,7 @@ function checkForMobile() {
         // 모바일 환경에서는 버튼을 숨기고 이미지를 클릭하도록 설정
         leftButton.style.display = 'none';
         rightButton.style.display = 'none';
+        initializeImageClickListeners(); // 모바일 환경에서 이미지 클릭 이벤트 설정
     } else {
         // 큰 화면에서는 버튼을 다시 표시
         leftButton.style.display = 'inline-block';
