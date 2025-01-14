@@ -30,12 +30,7 @@ export default async function handler(req, res) {
             }
         });
 
-        let parsedData = JSON.parse(existingData.Body.toString('utf-8')) || { participants_count: 0, results: [] };
-
-        if (newResult.requestId && parsedData.results.some(r => r.requestId === newResult.requestId)) {
-            return res.status(400).json({ error: 'Duplicate request detected' });
-        }
-
+        let parsedData; 
         try {
             parsedData = JSON.parse(existingData.Body.toString('utf-8'));
         } catch (error) {
@@ -43,13 +38,32 @@ export default async function handler(req, res) {
             parsedData = { participants_count: 0, results: [] }; // 데이터 파싱 오류 시 초기화
         }
 
+        if (
+            newResult.requestId && 
+            parsedData.results.some(r => r.requestId === newResult.requestId)
+        ) {
+            return res.status(400).json({ error: 'Duplicate request detected' });
+        }
+
+        // 새로운 설문조사를 시작하며 참가자 번호를 부여
+        parsedData.participants_count = parsedData.participants_count || 0;
+        parsedData.participants_count += 1;
+        const participantId = parsedData.participants_count;
+
         // 참가자 수 증가
-        parsedData.participants_count = (parsedData.participants_count || 0) + 1;
+        parsedData.participants_count = participantId;
+
+        // 새로운 설문 결과에 고유 번호를 추가
+        const resultsWithId = newResult.results.map((result, index) => ({
+            ...result,
+            participantId, // 참가자 고유 번호
+            responseId: `${participantId}-${index + 1}`, // 응답 고유 번호 (옵션)
+        }));        
 
         // 새 데이터를 기존 데이터에 병합
         console.log('Before merge:', parsedData.results.length);
         console.log('New data:', newResult.results.length);
-        parsedData.results = parsedData.results.concat(newResult.results);
+        parsedData.results = [...parsedData.results, ...resultsWithId];
         console.log('After merge:', parsedData.results.length);
 
         // 업데이트된 데이터 저장
@@ -62,7 +76,8 @@ export default async function handler(req, res) {
 
         res.status(200).json({ 
             message: 'Result saved and appended', 
-            participants_count: parsedData.participants_count // 저장 후 참가자 수 반환
+            participants_count: parsedData.participants_count,
+            participantId, // 저장 후 참가자 수 반환
         });
     } catch (error) {
         console.error('Error saving result:', error);
