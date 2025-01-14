@@ -58,11 +58,11 @@ export default async function handler(req, res) {
         const existingIds = new Set(parsedData.results.map(r => r.responseId));
         const uniqueResults = resultsWithId.filter(result => !existingIds.has(result.responseId));
 
-        if (uniqueResults.length === 0) {
-            return res.status(409).json({ error: 'Duplicate results detected, no new data saved.' });
-        }
+        // if (uniqueResults.length === 0) {
+        //     return res.status(409).json({ error: 'Duplicate results detected, no new data saved.' });
+        // }
 
-        parsedData.results = [...parsedData.results, ...uniqueResults];
+        parsedData.results = [...parsedData.results, ...resultsWithId];
 
         // 업데이트된 데이터 저장
         const updatedData = JSON.stringify(parsedData, null, 2); // 보기 쉽게 저장
