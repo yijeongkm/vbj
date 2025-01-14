@@ -9,7 +9,7 @@ const S3 = new AWS.S3({
 const INITIAL_DATA = { participants_count: 0, results: [] };
 
 export default async function handler(req, res) {
-    const newResult = req.body; // 새로운 설문 결과 데이터
+    const newResult = req.body;
 
     // 결과가 배열인지 확인
     if (!Array.isArray(newResult.results)) {
@@ -17,12 +17,11 @@ export default async function handler(req, res) {
     }
 
     const params = {
-        Bucket: 'realsurvey', // S3 버킷 이름
-        Key: 'pilot_survey.json', // 저장할 파일 이름
+        Bucket: 'realsurvey', 
+        Key: 'pilot_survey.json',
     };
 
     try {
-        // 기존 데이터를 불러와 파싱
         const existingData = await S3.getObject(params).promise().catch(error => {
             if (error.code === 'NoSuchKey') {
                 console.log('Initializing new file.');
@@ -47,16 +46,10 @@ export default async function handler(req, res) {
 
         const participantId = newResult.participantId;
 
-        // responseId  추가
-        const resultsWithId = newResult.results.map((result, index) => ({
+        const resultsWithId = newResult.results.map(result => ({
             ...result,
-            participantId, // 참가자 고유 ID
-            responseId: `${participantId}-${index + 1}`,
+            participantId, // 참가자 ID 추가
         }));
-
-        // 새 데이터를 기존 데이터에 병합
-        const existingIds = new Set(parsedData.results.map(r => r.responseId));
-        const uniqueResults = resultsWithId.filter(result => !existingIds.has(result.responseId));
 
         // if (uniqueResults.length === 0) {
         //     return res.status(409).json({ error: 'Duplicate results detected, no new data saved.' });
@@ -84,4 +77,4 @@ export default async function handler(req, res) {
         console.error('Error saving result:', error);
         res.status(500).json({ error: 'Error saving result' });
     }
-    }
+}
