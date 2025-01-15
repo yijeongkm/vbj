@@ -79,15 +79,21 @@ function shuffleArray(array) {
 function initializeImageClickListeners() {
     const leftImage = document.getElementById('image-left');
     const rightImage = document.getElementById('image-right');
+
+    // 기존 이벤트 리스너 제거
+    leftImage.replaceWith(leftImage.cloneNode(true));
+    rightImage.replaceWith(rightImage.cloneNode(true));
+
+    // 새로운 이벤트 리스너 추가
+    const newLeftImage = document.getElementById('image-left');
+    const newRightImage = document.getElementById('image-right');
     
-    // 왼쪽 이미지 클릭 이벤트
-    leftImage.addEventListener('click', () => {
+    newLeftImage.addEventListener('click', () => {
         console.log('Left image clicked');
         selectImage('left');
     });
 
-    // 오른쪽 이미지 클릭 이벤트
-    rightImage.addEventListener('click', () => {
+    newRightImage.addEventListener('click', () => {
         console.log('Right image clicked');
         selectImage('right');
     });
@@ -124,11 +130,11 @@ function updateQuestionCount() {
     document.getElementById('question-count').textContent = `문항 ${currentQuestion}/${totalQuestions}`;
 }
 
-function saveProgressBeforeExit(event) {
-    if (surveyResults.length > 0) {
-        saveProgressToServer();
-    }
-}
+// function saveProgressBeforeExit(event) {
+//     if (surveyResults.length > 0) {
+//         saveProgressToServer();
+//     }
+// }
 
 function nextSelection() {
     if (currentSelection === null) {
@@ -197,6 +203,9 @@ function proceedToNextQuestion() {
 
     // Save 버튼 표시 조건
     if (currentQuestion === totalQuestions) {
+        setTimeout(() => {
+            loadRandomImages();  // 다음 이미지를 로드
+        }, 300);
         console.log("Displaying Save button");
         document.getElementById('save-btn').style.display = 'inline-block';
         document.getElementById('next-btn').style.display = 'none';
@@ -210,34 +219,51 @@ function proceedToNextQuestion() {
     }
 }
 
-// 강제 종료 시 서버에 진행 중인 설문 데이터를 저장하는 함수 (추가된 부분)
-function saveProgressToServer() {
-    if (surveyResults.length > 0) {
-        const progressData = {
-            results: surveyResults,
-            savedAt: new Date().toISOString()
-        };
+function removeDuplicates(results) {
+    const uniqueResults = [];
+    const seen = new Set();
 
-        fetch('/api/save', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(progressData)
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok ' + response.statusText);
-            }
-            return response.text();
-        })
-        .then(data => {
-            console.log('Progress saved to server.');
-            surveyResults = []; // Reset survey results after saving
-        })
-        .catch(error => console.error('Error saving progress:', error));
-    }
+    results.forEach(item => {
+        // 모든 필드를 문자열로 묶어 고유 키 생성
+        const key = JSON.stringify(item);
+        if (!seen.has(key)) {
+            seen.add(key);
+            uniqueResults.push(item); // 중복되지 않은 항목만 추가
+        }
+    });
+
+    return uniqueResults;
 }
+
+
+// // 강제 종료 시 서버에 진행 중인 설문 데이터를 저장하는 함수 (추가된 부분)
+// function saveProgressToServer() {
+//     if (surveyResults.length > 0) {
+//         const progressData = {
+//             results: surveyResults,
+//             savedAt: new Date().toISOString()
+//         };
+
+//         fetch('/api/save', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json'
+//             },
+//             body: JSON.stringify(progressData)
+//         })
+//         .then(response => {
+//             if (!response.ok) {
+//                 throw new Error('Network response was not ok ' + response.statusText);
+//             }
+//             return response.text();
+//         })
+//         .then(data => {
+//             console.log('Progress saved to server.');
+//             surveyResults = []; // Reset survey results after saving
+//         })
+//         .catch(error => console.error('Error saving progress:', error));
+//     }
+// }
 
 function saveSurvey() {
     if (surveyResults.length === 0) {
@@ -245,9 +271,17 @@ function saveSurvey() {
         return;
     }
 
+    // 중복 데이터 제거
+    const uniqueResults = removeDuplicates(surveyResults);
+    console.log('Unique results:', uniqueResults);
+
+    // 한국 시간으로 저장 시간 생성
+    const now = new Date();
+    const savedAtKST = now.toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' });
+
     const finalResult = {
-        results: surveyResults,
-        savedAt: new Date().toISOString()
+        results: uniqueResults,
+        savedAt: savedAtKST
     };
 
     fetch('/api/save', {
@@ -265,7 +299,7 @@ function saveSurvey() {
     })
     .then(data => {
         console.log('Survey results saved to server.');
-        alert('Survey results saved.\n설문조사에 시간을 할애해주셔서 감사드립니다.');
+        alert('설문조사가 완료되었습니다.\n참여해주셔서 감사합니다.');
         setTimeout(() => {
             window.close();
         }, 300);

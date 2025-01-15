@@ -93,8 +93,8 @@ body {
 
 /* 선택된 이미지 스타일 */
 .selectable.selected {
-    border: 5px solid blue;
-    box-shadow: 0 0 15px rgba(0, 0, 255, 0.5);
+    border: 3px solid blue;
+    box-shadow: 0 0 15px rgba(0, 0, 255, 0.452);
 }
 
 /* 버튼 스타일 */
