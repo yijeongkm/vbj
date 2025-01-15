@@ -1,5 +1,4 @@
 window.onload = async function() {
-    await initializeParticipantId(); // ID 초기화
     loadRandomImages();
     checkForMobile(); // 모바일 반응형 체크
     updateQuestionCount(); // 현재 문항 번호 업데이트 (추가된 부분)
@@ -166,42 +165,50 @@ function nextSelection() {
     })
     .then(data => {
         console.log('Result saved to server:', data);
+
+        // 다음 설문으로 진행
+        proceedToNextQuestion();
     })
-    .catch(error => console.error('Error saving result:', error));
+    .catch(error => {
+        console.error('Error saving result:', error);
+
+        // 서버 저장 실패 시에도 다음 설문으로 진행
+        proceedToNextQuestion();
+    });
 }
 
-    // 저장 완료 후 다음 작업 진행
+function proceedToNextQuestion() {
+
+    // 선택 상태 초기화
     currentSelection = null;
+    clearSelection();
+
+    // 문항 카운트 증가
+    currentQuestion++;
+    console.log("Current Question:", currentQuestion);
+
+    updateQuestionCount();
+
     document.getElementById('image-left').style.border = '';
     document.getElementById('image-right').style.border = '';
         
-    // 문항 카운트 증가
-    currentQuestion++;
     document.getElementById('question-count').textContent = `문항 ${currentQuestion}/${totalQuestions}`;
     console.log("Current Question: ", currentQuestion); // 현재 문항 번호 확인
 
-    // **수정된 부분**: 문항이 30일 때 Save 버튼을 보여줌
+    // Save 버튼 표시 조건
     if (currentQuestion === totalQuestions) {
         console.log("Displaying Save button");
         document.getElementById('save-btn').style.display = 'inline-block';
         document.getElementById('next-btn').style.display = 'none';
         console.log("30번째 문항 - Next 버튼 숨기고 Save 버튼 보이기");
-        
-        // 마지막 문항에서도 이미지를 새로 호출
-        setTimeout(() => {
-            try {
-                loadRandomImages();
-            } catch (error) {
-                console.error('Error loading images:', error);
-            }
-        }, 300);
     } else {
-        document.getElementById('next-btn').style.display = 'inline-block'; // Next 버튼을 다시 보임
-        document.getElementById('save-btn').style.display = 'none'; // Save 버튼 숨기기
+        document.getElementById('next-btn').style.display = 'inline-block';
+        document.getElementById('save-btn').style.display = 'none';
         setTimeout(() => {
             loadRandomImages();  // 다음 이미지를 로드
         }, 300);
     }
+}
 
 // 강제 종료 시 서버에 진행 중인 설문 데이터를 저장하는 함수 (추가된 부분)
 function saveProgressToServer() {
