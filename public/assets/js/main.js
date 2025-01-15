@@ -189,7 +189,11 @@ function nextSelection() {
         
         // 마지막 문항에서도 이미지를 새로 호출
         setTimeout(() => {
-            loadRandomImages();
+            try {
+                loadRandomImages();
+            } catch (error) {
+                console.error('Error loading images:', error);
+            }
         }, 300);
     } else {
         document.getElementById('next-btn').style.display = 'inline-block'; // Next 버튼을 다시 보임
