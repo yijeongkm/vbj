@@ -144,7 +144,7 @@ function saveProgressBeforeExit(event) {
 
 function nextSelection() {
     if (currentSelection === null) {
-        alert('Please select an image before proceeding.');
+        alert('이미지를 선택해주세요.');
         return;
     }
 
