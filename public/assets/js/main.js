@@ -5,6 +5,7 @@ window.onload = async function() {
     updateQuestionCount(); // 현재 문항 번호 업데이트 (추가된 부분)
     initializeImageClickListeners(); // 이미지 클릭 이벤트 초기화
     window.addEventListener('resize', checkForMobile);
+    window.addEventListener('beforeunload', saveProgressBeforeExit); // 강제 종료 시 데이터 저장
 };
 
 // 총 문항 수 및 현재 문항 추적 변수
@@ -12,19 +13,6 @@ const totalQuestions = 30;
 let currentQuestion = 1;
 let currentSelection = null;
 let surveyResults = [];
-let surveyParticipantId = localStorage.getItem('participantId'); // 로컬 스토리지에서 가져오기
-
-if (!surveyParticipantId) {
-    fetch('/api/save', { method: 'POST', headers: { 'Content-Type': 'application/json' } })
-        .then(response => response.json())
-        .then(data => {
-            if (data.participantId) {
-                surveyParticipantId = data.participantId; // 서버에서 받은 ID 저장
-                localStorage.setItem('participantId', surveyParticipantId); // 로컬 스토리지에 저장
-            }
-        })
-        .catch(error => console.error('Error fetching participantId:', error));
-}
 
 async function loadRandomImages() {
     try {
@@ -57,12 +45,16 @@ function checkForMobile() {
         // 모바일 환경에서는 버튼을 숨기고 이미지를 클릭하도록 설정
         leftButton.style.display = 'none';
         rightButton.style.display = 'none';
-        console.log('Initializing image click listeners for mobile...');
+
+        console.log('Mobile mode: Buttons hidden, images are clickable.');
+
         initializeImageClickListeners(); // 모바일 환경에서 이미지 클릭 이벤트 설정
     } else {
         // 큰 화면에서는 버튼을 다시 표시
         leftButton.style.display = 'inline-block';
         rightButton.style.display = 'inline-block';
+
+        console.log('Desktop mode: Buttons visible.');
     }
 }
 
@@ -105,6 +97,7 @@ function initializeImageClickListeners() {
 // 이미지 선택 함수
 function selectImage(selection) {
     console.log(`selectImage called with selection: ${selection}`);
+
     const leftImage = document.getElementById('image-left');
     const rightImage = document.getElementById('image-right');
 
@@ -134,12 +127,8 @@ function updateQuestionCount() {
 
 function saveProgressBeforeExit(event) {
     if (surveyResults.length > 0) {
-        navigator.sendBeacon('/api/save', JSON.stringify({
-            results: surveyResults,
-            savedAt: new Date().toISOString()
-        }));
+        saveProgressToServer();
     }
-    event.returnValue = 'Are you sure you want to leave?';
 }
 
 function nextSelection() {
@@ -154,12 +143,12 @@ function nextSelection() {
     const rightImage = document.getElementById('image-right').src;
 
     const result = {
-        participantId: surveyParticipantId,
         gender: gender,
         age: age,
         selected: currentSelection,
         leftImage: leftImage,
-        rightImage: rightImage
+        rightImage: rightImage,
+        timestamp: new Date().toISOString()
     };
 
     surveyResults.push(result);
@@ -167,7 +156,7 @@ function nextSelection() {
     fetch('/api/save', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ participantId: surveyParticipantId, results: [result] })
+        body: JSON.stringify({ results: [result] })
     })
     .then(response => {
         if (!response.ok) {
@@ -205,9 +194,9 @@ function nextSelection() {
     } else {
         document.getElementById('next-btn').style.display = 'inline-block'; // Next 버튼을 다시 보임
         document.getElementById('save-btn').style.display = 'none'; // Save 버튼 숨기기
-    setTimeout(() => {
-        loadRandomImages();  // 다음 이미지를 로드
-    }, 300);
+        setTimeout(() => {
+            loadRandomImages();  // 다음 이미지를 로드
+        }, 300);
     }
 
 // 강제 종료 시 서버에 진행 중인 설문 데이터를 저장하는 함수 (추가된 부분)
@@ -245,30 +234,32 @@ function saveSurvey() {
         return;
     }
 
-    const lastResult = {
-        ...surveyResults[surveyResults.length - 1],  // 마지막 문항 결과
-        end: true  // 마지막 문항에 end 추가
+    const finalResult = {
+        results: surveyResults,
+        savedAt: new Date().toISOString()
     };
 
-    // 서버에 마지막 결과와 end만 저장
     fetch('/api/save', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ results: lastResult, savedAt: new Date().toISOString() })  // 마지막 문항과 end를 포함한 전체 결과 저장
+        body: JSON.stringify(finalResult)
     })
     .then(response => {
-        if (!response.ok) throw new Error('결과 저장 중 에러 발생');
+        if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+        }
+        return response.text();
     })
     .then(data => {
-        console.log('설문 결과가 성공적으로 저장되었습니다.');
-        alert('설문조사가 저장되었습니다.\n참여해주셔서 감사드립니다.');
+        console.log('Survey results saved to server.');
+        alert('Survey results saved.\n설문조사에 시간을 할애해주셔서 감사드립니다.');
         setTimeout(() => {
-            window.close(); // 설문 완료 후 창 닫기
-        }, 200);
+            window.close();
+        }, 300);
     })
-    .catch(error => console.error('설문 저장 중 에러:', error));
+    .catch(error => console.error('Error saving survey results:', error));
 }
 
 function downloadResults() {
