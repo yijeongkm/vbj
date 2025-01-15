@@ -130,12 +130,6 @@ function updateQuestionCount() {
     document.getElementById('question-count').textContent = `문항 ${currentQuestion}/${totalQuestions}`;
 }
 
-// function saveProgressBeforeExit(event) {
-//     if (surveyResults.length > 0) {
-//         saveProgressToServer();
-//     }
-// }
-
 function nextSelection() {
     if (currentSelection === null) {
         alert('이미지를 선택해주세요.');
@@ -235,40 +229,31 @@ function removeDuplicates(results) {
     return uniqueResults;
 }
 
-
-// // 강제 종료 시 서버에 진행 중인 설문 데이터를 저장하는 함수 (추가된 부분)
-// function saveProgressToServer() {
-//     if (surveyResults.length > 0) {
-//         const progressData = {
-//             results: surveyResults,
-//             savedAt: new Date().toISOString()
-//         };
-
-//         fetch('/api/save', {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             },
-//             body: JSON.stringify(progressData)
-//         })
-//         .then(response => {
-//             if (!response.ok) {
-//                 throw new Error('Network response was not ok ' + response.statusText);
-//             }
-//             return response.text();
-//         })
-//         .then(data => {
-//             console.log('Progress saved to server.');
-//             surveyResults = []; // Reset survey results after saving
-//         })
-//         .catch(error => console.error('Error saving progress:', error));
-//     }
-// }
-
 function saveSurvey() {
     if (surveyResults.length === 0) {
         alert('No survey results to save.');
         return;
+    }
+
+    // 마지막 문항 데이터가 surveyResults에 있는지 확인
+    if (currentQuestion === totalQuestions && currentSelection !== null) {
+        const gender = document.getElementById('gender').value;
+        const age = document.getElementById('age').value;
+        const leftImage = document.getElementById('image-left').src;
+        const rightImage = document.getElementById('image-right').src;
+
+        const lastResult = {
+            gender: gender,
+            age: age,
+            selected: currentSelection,
+            leftImage: leftImage,
+            rightImage: rightImage,
+            timestamp: new Date().toISOString()
+        };
+
+        // 마지막 문항 데이터를 배열에 추가
+        surveyResults.push(lastResult);
+        console.log('Last question data added to surveyResults:', lastResult);
     }
 
     // 중복 데이터 제거
