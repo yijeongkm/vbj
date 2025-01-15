@@ -273,7 +273,6 @@ function saveSurvey() {
 
     // 중복 데이터 제거
     const uniqueResults = removeDuplicates(surveyResults);
-    console.log('Unique results:', uniqueResults);
 
     const finalResult = {
         results: uniqueResults,
@@ -287,18 +286,11 @@ function saveSurvey() {
         },
         body: JSON.stringify(finalResult)
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok ' + response.statusText);
-        }
-        return response.text();
-    })
+    .then(response => response.text())
     .then(data => {
         console.log('Survey results saved to server.');
         alert('설문조사가 완료되었습니다.\n참여해주셔서 감사합니다.');
-        setTimeout(() => {
-            window.close();
-        }, 300);
+        setTimeout(() => window.close(), 300);
     })
     .catch(error => console.error('Error saving survey results:', error));
 }

@@ -40,21 +40,35 @@ export default async function handler(req, res) {
             existingResults = []; // 데이터 파싱 오류 시 빈 배열로 초기화
         }
 
-        // 새 데이터를 기존 데이터에 병합
-        existingResults = existingResults.concat(newResult.results);
+        // 병합 시 중복 제거
+        const mergedResults = mergeUnique(existingResults, newResult.results);
 
-        // 업데이트된 데이터 저장
-        const updatedData = JSON.stringify(existingResults, null, 2); // 보기 쉽게 저장
+        const updatedData = JSON.stringify(mergedResults, null, 2);
         await S3.putObject({
             ...params,
             Body: updatedData,
             ContentType: 'application/json',
         }).promise();
 
-        res.status(200).json({ 
-            message: 'Result saved and appended'});
+        res.status(200).json({ message: 'Result saved and appended' });
     } catch (error) {
         console.error('Error saving result:', error);
         res.status(500).json({ error: 'Error saving result' });
     }
+}
+
+function mergeUnique(existingResults, newResults) {
+    const combined = [...existingResults, ...newResults];
+
+    // JSON.stringify를 사용해 고유 키 생성
+    const unique = combined.reduce((acc, item) => {
+        const key = JSON.stringify(item); // 모든 필드를 기준으로 고유 키 생성
+        if (!acc.seen.has(key)) {
+            acc.seen.add(key);
+            acc.results.push(item);
+        }
+        return acc;
+    }, { seen: new Set(), results: [] });
+
+    return unique.results;
 }
