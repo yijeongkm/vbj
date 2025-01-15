@@ -275,13 +275,9 @@ function saveSurvey() {
     const uniqueResults = removeDuplicates(surveyResults);
     console.log('Unique results:', uniqueResults);
 
-    // 한국 시간으로 저장 시간 생성
-    const now = new Date();
-    const savedAtKST = now.toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' });
-
     const finalResult = {
         results: uniqueResults,
-        savedAt: savedAtKST
+        savedAt: new Date().toISOString()
     };
 
     fetch('/api/save', {

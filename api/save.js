@@ -9,6 +9,9 @@ const S3 = new AWS.S3({
 export default async function handler(req, res) {
     const newResult = req.body;
 
+    // 디버깅 로그: API 호출 시 전달된 데이터 출력
+    console.log('Save API called with data:', newResult);
+
     // 결과가 배열인지 확인
     if (!Array.isArray(newResult.results)) {
         return res.status(400).json({ error: 'Invalid data format: results should be an array' });
