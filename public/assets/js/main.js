@@ -177,47 +177,38 @@ function nextSelection() {
     })
     .then(data => {
         console.log('Result saved to server:', data);
-
-        // // 서버에서 participantId를 반환받으면 저장
-        // if (!surveyParticipantId && data.participantId) {
-        //     surveyParticipantId = data.participantId;
-        //     localStorage.setItem('participantId', surveyParticipantId);
-        // }
-
-        // 저장 완료 후 다음 작업 진행
-        currentSelection = null;
-        document.getElementById('image-left').style.border = '';
-        document.getElementById('image-right').style.border = '';
-        
-        // 문항 카운트 증가
-        currentQuestion++;
-        document.getElementById('question-count').textContent = `문항 ${currentQuestion}/${totalQuestions}`;
-        console.log("Current Question: ", currentQuestion); // 현재 문항 번호 확인
-
-        // **수정된 부분**: 문항이 30일 때 Save 버튼을 보여줌
-        if (currentQuestion === totalQuestions) {
-
-            console.log("Displaying Save button");
-            
-            document.getElementById('save-btn').style.display = 'inline-block';
-            document.getElementById('next-btn').style.display = 'none';
-            
-            console.log("30번째 문항 - Next 버튼 숨기고 Save 버튼 보이기");
-
-            // 마지막 문항에서도 이미지를 새로 호출
-            setTimeout(() => {
-                loadRandomImages();
-            }, 300);
-        } else {
-            document.getElementById('next-btn').style.display = 'inline-block'; // Next 버튼을 다시 보임
-            document.getElementById('save-btn').style.display = 'none'; // Save 버튼 숨기기
-        setTimeout(() => {
-            loadRandomImages();  // 다음 이미지를 로드
-        }, 300);
-        }
     })
     .catch(error => console.error('Error saving result:', error));
 }
+
+    // 저장 완료 후 다음 작업 진행
+    currentSelection = null;
+    document.getElementById('image-left').style.border = '';
+    document.getElementById('image-right').style.border = '';
+        
+    // 문항 카운트 증가
+    currentQuestion++;
+    document.getElementById('question-count').textContent = `문항 ${currentQuestion}/${totalQuestions}`;
+    console.log("Current Question: ", currentQuestion); // 현재 문항 번호 확인
+
+    // **수정된 부분**: 문항이 30일 때 Save 버튼을 보여줌
+    if (currentQuestion === totalQuestions) {
+        console.log("Displaying Save button");
+        document.getElementById('save-btn').style.display = 'inline-block';
+        document.getElementById('next-btn').style.display = 'none';
+        console.log("30번째 문항 - Next 버튼 숨기고 Save 버튼 보이기");
+        
+        // 마지막 문항에서도 이미지를 새로 호출
+        setTimeout(() => {
+            loadRandomImages();
+        }, 300);
+    } else {
+        document.getElementById('next-btn').style.display = 'inline-block'; // Next 버튼을 다시 보임
+        document.getElementById('save-btn').style.display = 'none'; // Save 버튼 숨기기
+    setTimeout(() => {
+        loadRandomImages();  // 다음 이미지를 로드
+    }, 300);
+    }
 
 // 강제 종료 시 서버에 진행 중인 설문 데이터를 저장하는 함수 (추가된 부분)
 function saveProgressToServer() {
@@ -254,13 +245,18 @@ function saveSurvey() {
         return;
     }
 
+    const lastResult = {
+        ...surveyResults[surveyResults.length - 1],  // 마지막 문항 결과
+        end: true  // 마지막 문항에 end 추가
+    };
+
     // 서버에 마지막 결과와 end만 저장
     fetch('/api/save', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ results: surveyResults, savedAt: new Date().toISOString() })  // 마지막 문항과 end를 포함한 전체 결과 저장
+        body: JSON.stringify({ results: lastResult, savedAt: new Date().toISOString() })  // 마지막 문항과 end를 포함한 전체 결과 저장
     })
     .then(response => {
         if (!response.ok) throw new Error('결과 저장 중 에러 발생');
