@@ -42,7 +42,7 @@ async function loadFilesToDynamoDB() {
                 ContinuationToken: continuationToken
             }).promise();
 
-            imageFiles = imageFiles.concat(data.Contents.filter(item => /\.(jpg|jpeg|png|gif)$/.test(item.Key)));
+            imageFiles = imageFiles.concat(data.Contents.filter(item => /\.(jpg|jpeg|png|gif)$/i.test(item.Key)));
             console.log(`현재까지 로드된 파일 수: ${imageFiles.length}`);
             isTruncated = data.IsTruncated;
             continuationToken = data.NextContinuationToken;
