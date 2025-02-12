@@ -19,7 +19,7 @@ export default async function handler(req, res) {
 
     const params = {
         Bucket: 'realsurvey', 
-        Key: 'pilot_survey.json',
+        Key: 'ksv_survey.json',
     };
 
     try {
